@@ -17,6 +17,7 @@ export default function TopNav() {
     { href: '/invoices/new', label: 'New Invoice' },
     { href: '/invoices', label: 'Invoice History' },
     { href: '/outstanding', label: 'Outstanding' },
+    { href: '/recycle-bin', label: 'Recycle Bin' },
   ];
 
   return (

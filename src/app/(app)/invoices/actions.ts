@@ -124,19 +124,19 @@ export async function deleteInvoiceAction(invoiceId: string) {
   if (!orgs || orgs.length === 0) throw new Error('No organization found');
   const orgId = orgs[0].id;
 
-  // 1. Delete associated payments first to avoid foreign key errors
+  // 1. Soft delete associated payments first
   const { error: paymentError } = await supabase
     .from('party_payments')
-    .delete()
+    .update({ deleted_at: new Date().toISOString() })
     .eq('invoice_id', invoiceId)
     .eq('organization_id', orgId);
 
   if (paymentError) throw new Error(paymentError.message);
 
-  // 2. Delete the invoice (invoice_items will be deleted automatically due to ON DELETE CASCADE)
+  // 2. Soft delete the invoice by setting status to cancelled
   const { error: invError } = await supabase
     .from('invoices')
-    .delete()
+    .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
     .eq('id', invoiceId)
     .eq('organization_id', orgId);
 
