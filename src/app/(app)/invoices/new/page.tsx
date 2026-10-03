@@ -7,15 +7,24 @@ export default async function NewInvoicePage() {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
   
-  // Fetch customers
-  const { data: customers } = await supabase.from('parties').select('*').order('name')
-  
-  // Fetch full inventory hierarchy
-  const { data: products } = await supabase.from('products').select('*').is('deleted_at', null).order('name')
-  const { data: grades } = await supabase.from('grades').select('*').is('deleted_at', null)
-  const { data: sizes } = await supabase.from('sizes').select('*').is('deleted_at', null)
-  const { data: variants } = await supabase.from('variants').select('*').is('deleted_at', null)
-  const { data: rates } = await supabase.from('v_current_rates').select('*')
+  // Fetch all required data in parallel to reduce load time
+  const [
+    { data: customers },
+    { data: products },
+    { data: grades },
+    { data: sizes },
+    { data: variants },
+    { data: rates },
+    { data: counters }
+  ] = await Promise.all([
+    supabase.from('parties').select('*').order('name'),
+    supabase.from('products').select('*').is('deleted_at', null).order('name'),
+    supabase.from('grades').select('*').is('deleted_at', null),
+    supabase.from('sizes').select('*').is('deleted_at', null),
+    supabase.from('variants').select('*').is('deleted_at', null),
+    supabase.from('v_current_rates').select('*'),
+    supabase.from('invoice_counters').select('last_no').limit(1)
+  ]);
 
   // Group into a nested structure for the client
   const inventory = products?.map(product => {
@@ -35,8 +44,6 @@ export default async function NewInvoicePage() {
       }))
     }
   }) || []
-  // Fetch next invoice number
-  const { data: counters } = await supabase.from('invoice_counters').select('last_no').limit(1)
   const nextInvoiceNo = counters && counters.length > 0 ? counters[0].last_no + 1 : 1
   
   return (
