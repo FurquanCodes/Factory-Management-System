@@ -12,6 +12,7 @@ export default async function InvoiceHistoryPage() {
   const { data: invoices, error } = await supabase
     .from('invoices')
     .select('*, parties(name), party_payments(id)')
+    .neq('status', 'cancelled')
     .order('invoice_no', { ascending: false })
 
   if (error) {
