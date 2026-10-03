@@ -75,7 +75,7 @@ export default function Sidebar() {
           <Link 
             href="/payments/new" 
             onClick={closeMenu}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-turtle-secondary hover:bg-turtle-light text-turtle-dark font-bold rounded-md transition-colors shadow-sm mb-3"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-turtle-dark hover:bg-turtle-primary text-white font-bold rounded-md transition-colors shadow-sm mb-3 border border-white/20"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
             Record Payment

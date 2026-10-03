@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 @theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  
   --color-turtle-dark: #36545A; /* Darkened from #557B83 */
   --color-turtle-primary: #39AEA9;
   --color-turtle-secondary: #A2D5AB;
@@ -11,18 +13,18 @@
   --color-blue-100: #E5EFC1;
   --color-blue-200: #A2D5AB;
   --color-blue-400: #39AEA9;
-  --color-blue-500: #39AEA9;
-  --color-blue-600: #39AEA9;
-  --color-blue-700: #36545A;
-  --color-blue-800: #36545A;
+  --color-blue-500: #36545A;
+  --color-blue-600: #36545A;
+  --color-blue-700: #294045;
+  --color-blue-800: #1b2a2d;
 
   /* Override Site Emeralds to Turtle Green */
   --color-emerald-50: #E5EFC1;
   --color-emerald-100: #E5EFC1;
   --color-emerald-400: #A2D5AB;
-  --color-emerald-500: #A2D5AB;
-  --color-emerald-600: #A2D5AB;
-  --color-emerald-700: #36545A;
+  --color-emerald-500: #36545A;
+  --color-emerald-600: #36545A;
+  --color-emerald-700: #294045;
 }
 
 @layer base {
