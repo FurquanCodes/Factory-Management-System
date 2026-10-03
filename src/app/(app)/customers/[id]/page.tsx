@@ -61,6 +61,11 @@ export default async function CustomerLedgerPage({
       .order('invoice_no', { ascending: false });
     if (invs) invoices = invs;
   }
+  const formatBalance = (amountRaw: any) => {
+    const amount = Number(amountRaw || 0);
+    if (amount < 0) return Math.abs(amount).toLocaleString(undefined, {minimumFractionDigits: 2}) + ' (Advance)';
+    return amount.toLocaleString(undefined, {minimumFractionDigits: 2});
+  };
 
   return (
     <div className="w-full min-h-screen bg-slate-50 p-8 pt-8">
@@ -103,7 +108,7 @@ export default async function CustomerLedgerPage({
                 <h2 className="text-xl font-bold text-slate-200">Current Balance</h2>
               </div>
               <div className="text-3xl font-black text-emerald-400">
-                Rs {Number(currentDue).toLocaleString(undefined, {minimumFractionDigits: 2})}
+                Rs {formatBalance(currentDue)}
               </div>
             </div>
 
@@ -153,7 +158,7 @@ export default async function CustomerLedgerPage({
                         {Number(row.received) > 0 ? Number(row.received).toLocaleString(undefined, {minimumFractionDigits: 2}) : '-'}
                       </td>
                       <td className="p-4 text-right font-black text-slate-800 text-lg">
-                        {Number(row.due_amount).toLocaleString(undefined, {minimumFractionDigits: 2})}
+                        {formatBalance(row.due_amount)}
                       </td>
                     </tr>
                   )
@@ -239,7 +244,7 @@ export default async function CustomerLedgerPage({
           </div>
           <div style={{ textAlign: 'right' }}>
             <div>Current Balance:</div>
-            <div style={{ fontSize: '20px', fontWeight: 'bold' }}>Rs {Number(currentDue).toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
+            <div style={{ fontSize: '20px', fontWeight: 'bold' }}>Rs {formatBalance(currentDue)}</div>
           </div>
         </div>
 
@@ -275,7 +280,7 @@ export default async function CustomerLedgerPage({
                     <td><b>{row.details}</b></td>
                     <td className="r">{Number(row.bill) > 0 ? Number(row.bill).toLocaleString(undefined, {minimumFractionDigits: 2}) : '-'}</td>
                     <td className="r">{Number(row.received) > 0 ? Number(row.received).toLocaleString(undefined, {minimumFractionDigits: 2}) : '-'}</td>
-                    <td className="r"><b>{Number(row.due_amount).toLocaleString(undefined, {minimumFractionDigits: 2})}</b></td>
+                    <td className="r"><b>{formatBalance(row.due_amount)}</b></td>
                   </tr>
                 )
               })}
