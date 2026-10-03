@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import Link from 'next/link'
+import Greeting from '@/app/components/Greeting'
 
 export const dynamic = 'force-dynamic'
 
@@ -40,9 +41,8 @@ export default async function DashboardPage() {
   const todayTotal = todayInvoices?.reduce((sum, r) => sum + Number(r.total_amount || 0), 0) || 0
   const todayCount = todayInvoices?.length || 0
 
-  const now = new Date()
-  const timeGreeting = now.getHours() < 12 ? 'Good Morning' : now.getHours() < 17 ? 'Good Afternoon' : 'Good Evening'
-  const todayFormatted = now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+  const todayTotal = todayInvoices?.reduce((sum, r) => sum + Number(r.total_amount || 0), 0) || 0
+  const todayCount = todayInvoices?.length || 0
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
@@ -51,10 +51,7 @@ export default async function DashboardPage() {
       <div className="bg-gradient-to-r from-blue-700 via-blue-800 to-indigo-900 text-white">
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-              <h1 className="text-3xl font-black tracking-tight">{timeGreeting}! 👋</h1>
-              <p className="text-blue-200 text-lg mt-1 font-medium">{todayFormatted}</p>
-            </div>
+            <Greeting />
             <div className="flex gap-3">
               <Link href="/invoices/new" className="px-6 py-3 bg-white/15 backdrop-blur-sm border border-white/30 text-white font-bold rounded-xl hover:bg-white/25 transition-all flex items-center gap-2">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
