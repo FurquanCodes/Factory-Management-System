@@ -53,8 +53,8 @@ export default async function RecycleBinPage() {
             <span className="bg-slate-200 text-slate-600 text-sm py-1 px-3 rounded-full">{deletedCustomers?.length || 0}</span>
           </h2>
           {deletedCustomers && deletedCustomers.length > 0 ? (
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-              <table className="w-full text-left">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
+              <table className="w-full text-left min-w-[600px]">
                 <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 text-sm font-bold">
                   <tr>
                     <th className="px-6 py-4">Name</th>
@@ -91,8 +91,8 @@ export default async function RecycleBinPage() {
             <span className="bg-slate-200 text-slate-600 text-sm py-1 px-3 rounded-full">{cancelledInvoices?.length || 0}</span>
           </h2>
           {cancelledInvoices && cancelledInvoices.length > 0 ? (
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-              <table className="w-full text-left">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
+              <table className="w-full text-left min-w-[800px]">
                 <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 text-sm font-bold">
                   <tr>
                     <th className="px-6 py-4">Invoice No</th>

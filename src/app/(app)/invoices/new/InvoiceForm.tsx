@@ -389,7 +389,7 @@ export default function InvoiceForm({ customers, inventory, nextInvoiceNo }: { c
           <button 
             onClick={() => handleSave(true)} 
             disabled={isPending}
-            className="px-8 py-3 bg-emerald-600 text-white font-bold text-xl rounded-lg shadow-lg flex items-center justify-center transition-transform hover:scale-105 disabled:opacity-50 disabled:scale-100"
+            className="px-8 py-3 bg-green-700 text-white font-bold text-xl rounded-lg shadow-lg flex items-center justify-center transition-transform hover:scale-105 hover:bg-green-800 disabled:opacity-50 disabled:scale-100"
           >
             {isPending ? 'Processing...' : 'Save & Print Invoice'}
           </button>

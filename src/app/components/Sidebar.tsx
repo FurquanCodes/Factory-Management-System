@@ -23,11 +23,11 @@ export default function Sidebar() {
   return (
     <>
       {/* Mobile Top Bar */}
-      <div className="md:hidden flex items-center justify-between bg-turtle-dark text-white h-16 px-4 shrink-0 noprint">
+      <div className="md:hidden flex items-center justify-between bg-slate-900 text-white h-16 px-4 shrink-0 noprint">
         <Link href="/dashboard" className="font-black text-xl tracking-tight text-white">
           A One Sanitory
         </Link>
-        <button onClick={() => setIsOpen(true)} className="p-2 text-turtle-light hover:text-white">
+        <button onClick={() => setIsOpen(true)} className="p-2 text-slate-300 hover:text-white">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
         </button>
       </div>
@@ -38,12 +38,12 @@ export default function Sidebar() {
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed md:static inset-y-0 left-0 w-64 bg-turtle-dark text-turtle-light z-50 transform transition-transform duration-300 ease-in-out md:translate-x-0 flex flex-col noprint ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <aside className={`fixed md:static inset-y-0 left-0 w-64 bg-slate-900 text-slate-300 z-50 transform transition-transform duration-300 ease-in-out md:translate-x-0 flex flex-col noprint ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="h-16 flex items-center px-6 border-b border-white/10 justify-between md:justify-center">
           <Link href="/dashboard" className="font-black text-xl text-white tracking-tight">
             A One Sanitory
           </Link>
-          <button onClick={closeMenu} className="md:hidden p-2 text-turtle-light hover:text-white">
+          <button onClick={closeMenu} className="md:hidden p-2 text-slate-400 hover:text-white">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
         </div>
