@@ -127,11 +127,11 @@
     /* Make the paper fill the page perfectly */
     #paper {
       position: relative !important;
-      margin: 0 !important;
+      margin: 5mm auto !important;
       padding: 10mm !important;
-      width: 100% !important;
+      width: calc(100% - 10mm) !important;
       max-width: none !important;
-      border: none !important;
+      border: 1px solid #000 !important;
       box-shadow: none !important;
       page-break-after: avoid !important;
       page-break-inside: avoid !important;
