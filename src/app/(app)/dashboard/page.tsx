@@ -41,9 +41,6 @@ export default async function DashboardPage() {
   const todayTotal = todayInvoices?.reduce((sum, r) => sum + Number(r.total_amount || 0), 0) || 0
   const todayCount = todayInvoices?.length || 0
 
-  const todayTotal = todayInvoices?.reduce((sum, r) => sum + Number(r.total_amount || 0), 0) || 0
-  const todayCount = todayInvoices?.length || 0
-
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
       
