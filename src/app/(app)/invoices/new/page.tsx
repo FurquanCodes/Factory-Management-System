@@ -11,10 +11,10 @@ export default async function NewInvoicePage() {
   const { data: customers } = await supabase.from('parties').select('*').order('name')
   
   // Fetch full inventory hierarchy
-  const { data: products } = await supabase.from('products').select('*').order('name')
-  const { data: grades } = await supabase.from('grades').select('*')
-  const { data: sizes } = await supabase.from('sizes').select('*')
-  const { data: variants } = await supabase.from('variants').select('*')
+  const { data: products } = await supabase.from('products').select('*').is('deleted_at', null).order('name')
+  const { data: grades } = await supabase.from('grades').select('*').is('deleted_at', null)
+  const { data: sizes } = await supabase.from('sizes').select('*').is('deleted_at', null)
+  const { data: variants } = await supabase.from('variants').select('*').is('deleted_at', null)
   const { data: rates } = await supabase.from('v_current_rates').select('*')
 
   // Group into a nested structure for the client
