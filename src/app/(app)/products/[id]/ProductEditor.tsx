@@ -61,7 +61,7 @@ export default function ProductEditor({ product, qualities, sizes, variants, rat
     confirmAction(
       "Delete Quality",
       "Are you sure? This will remove all prices associated with this quality.",
-      async () => await deleteQualityAction(product.id, id)
+      async () => { await deleteQualityAction(product.id, id); }
     )
   }
 
@@ -69,7 +69,7 @@ export default function ProductEditor({ product, qualities, sizes, variants, rat
     confirmAction(
       "Delete Size",
       "Are you sure? This will remove all prices associated with this size.",
-      async () => await deleteSizeAction(product.id, id)
+      async () => { await deleteSizeAction(product.id, id); }
     )
   }
 
@@ -77,7 +77,7 @@ export default function ProductEditor({ product, qualities, sizes, variants, rat
     confirmAction(
       "Delete Combination",
       "Are you sure you want to delete this specific quality and size combination?",
-      async () => await deleteVariantAction(product.id, id)
+      async () => { await deleteVariantAction(product.id, id); }
     )
   }
 

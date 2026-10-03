@@ -69,7 +69,7 @@ export default async function CustomersPage() {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {grouped[city].map((c) => (
+              {grouped[city].map((c: any) => (
                 <Link
                   href={`/customers/${c.id}`} 
                   key={c.id} 
