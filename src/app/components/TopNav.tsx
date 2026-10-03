@@ -46,7 +46,7 @@ export default function TopNav() {
         {/* Right Side: Actions and Mobile Toggle */}
         <div className="flex items-center gap-3 md:gap-4">
           <Link href="/payments/new" className="hidden sm:inline-block text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-4 py-1.5 rounded font-bold text-sm transition-colors">
-            + Payment
+            + Record Payment
           </Link>
           <span className="hidden md:inline-block text-sm cursor-pointer hover:underline text-slate-500 font-medium">Eng | اردو</span>
           <button className="hidden sm:inline-block text-red-500 bg-red-50 hover:bg-red-100 px-4 py-1.5 rounded font-bold text-sm transition-colors">
