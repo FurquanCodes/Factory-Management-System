@@ -19,6 +19,7 @@ export default async function CustomersPage() {
   const { data: customers } = await supabase
     .from('parties')
     .select('*')
+    .is('deleted_at', null)
     .order('name')
     
   const grouped = customers ? groupByCity(customers) : {};
