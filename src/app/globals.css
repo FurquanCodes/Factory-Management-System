@@ -1,5 +1,30 @@
 @import "tailwindcss";
 
+@theme {
+  --color-turtle-dark: #557B83;
+  --color-turtle-primary: #39AEA9;
+  --color-turtle-secondary: #A2D5AB;
+  --color-turtle-light: #E5EFC1;
+
+  /* Override Site Blues to Turtle Teal */
+  --color-blue-50: #E5EFC1;
+  --color-blue-100: #E5EFC1;
+  --color-blue-200: #A2D5AB;
+  --color-blue-400: #39AEA9;
+  --color-blue-500: #39AEA9;
+  --color-blue-600: #39AEA9;
+  --color-blue-700: #557B83;
+  --color-blue-800: #557B83;
+
+  /* Override Site Emeralds to Turtle Green */
+  --color-emerald-50: #E5EFC1;
+  --color-emerald-100: #E5EFC1;
+  --color-emerald-400: #A2D5AB;
+  --color-emerald-500: #A2D5AB;
+  --color-emerald-600: #A2D5AB;
+  --color-emerald-700: #557B83;
+}
+
 @layer base {
   :root {
     --blue: #2563EB;
