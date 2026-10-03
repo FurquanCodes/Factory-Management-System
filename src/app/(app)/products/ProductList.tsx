@@ -83,12 +83,6 @@ export default function ProductList({ productList }: { productList: any[] }) {
               
               <div className="flex gap-2">
                 <button 
-                  onClick={(e) => handleDelete(e, product.id)}
-                  className="px-4 py-2.5 text-base font-bold bg-white border border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg shadow-sm transition-all"
-                >
-                  Delete
-                </button>
-                <button 
                   onClick={(e) => { e.stopPropagation(); router.push(`/products/${product.id}`); }}
                   className="px-5 py-2.5 text-base font-bold bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 hover:text-black rounded-lg shadow-sm transition-all"
                 >
