@@ -2,20 +2,43 @@
 
 @layer base {
   :root {
-    --blue: #1D4ED8;
-    --blue-dark: #1E40AF;
-    --text: #111111;
-    --muted: #6B7280;
-    --line: #D1D5DB;
-    --field-border: #9CA3AF;
-    --grey: #F3F4F6;
-    --danger: #B91C1C;
-    --success: #15803D;
+    --blue: #2563EB;
+    --blue-dark: #1D4ED8;
+    --text: #0F172A;
+    --muted: #64748B;
+    --line: #E2E8F0;
+    --field-border: #CBD5E1;
+    --grey: #F8FAFC;
+    --danger: #DC2626;
+    --success: #16A34A;
   }
 
   body {
-    background-color: #F8FAFC; /* Softer background to make white cards pop */
+    background-color: #F8FAFC; 
     color: var(--text);
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94A3B8;
+  }
+
+  /* Refined Focus States for Inputs */
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    border-color: #3B82F6 !important;
   }
 
   @keyframes fadeInUp {
