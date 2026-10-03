@@ -415,16 +415,24 @@ export default function InvoiceForm({ customers, inventory, nextInvoiceNo }: { c
         )}
 
         <div className="ph relative z-20">
-          <b>A One Sanitory Ware</b>
-          <span>Hafizabad Road, Gujranwala</span>
+          <div className="ph-left">
+            <b>A One Sanitory Ware</b>
+            <span>Hafizabad Road, Gujranwala</span>
+          </div>
+          <div className="ph-right">
+            INVOICE
+          </div>
         </div>
-        <div className="pt">INVOICE</div>
         
         <div className="meta">
-          <div><span>Customer Name</span><b id="pc">{custName}</b></div>
-          <div><span>Invoice No</span><b id="pn">{nextInvoiceNo}</b></div>
-          <div><span>City</span><b id="py">{custCity}</b></div>
-          <div><span>Invoice Date</span><b id="pd">{dateStr}</b></div>
+          <div className="meta-col">
+            <div className="meta-item"><span>Customer Name</span><b id="pc">{custName}</b></div>
+            <div className="meta-item"><span>City</span><b id="py">{custCity}</b></div>
+          </div>
+          <div className="meta-col">
+            <div className="meta-item"><span>Invoice No</span><b id="pn">{nextInvoiceNo}</b></div>
+            <div className="meta-item"><span>Invoice Date</span><b id="pd">{dateStr}</b></div>
+          </div>
         </div>
         
         <div className="scroll">

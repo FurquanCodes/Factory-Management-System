@@ -75,16 +75,24 @@ export default async function InvoiceViewPage({ params }: { params: Promise<{ id
         )}
 
         <div className="ph relative z-20">
-          <b>A One Sanitory Ware</b>
-          <span>Hafizabad Road, Gujranwala</span>
+          <div className="ph-left">
+            <b>A One Sanitory Ware</b>
+            <span>Hafizabad Road, Gujranwala</span>
+          </div>
+          <div className="ph-right">
+            INVOICE
+          </div>
         </div>
-        <div className="pt relative z-20">INVOICE</div>
         
         <div className="meta relative z-20">
-          <div><span>Customer Name</span><b id="pc">{invoice.party_name_snapshot}</b></div>
-          <div><span>Invoice No</span><b id="pn">{invoice.invoice_no}</b></div>
-          <div><span>City</span><b id="py">{invoice.party_city_snapshot}</b></div>
-          <div><span>Invoice Date</span><b id="pd">{displayDate}</b></div>
+          <div className="meta-col">
+            <div className="meta-item"><span>Customer Name</span><b id="pc">{invoice.party_name_snapshot}</b></div>
+            <div className="meta-item"><span>City</span><b id="py">{invoice.party_city_snapshot}</b></div>
+          </div>
+          <div className="meta-col">
+            <div className="meta-item"><span>Invoice No</span><b id="pn">{invoice.invoice_no}</b></div>
+            <div className="meta-item"><span>Invoice Date</span><b id="pd">{displayDate}</b></div>
+          </div>
         </div>
         
         <div className="scroll relative z-20">
