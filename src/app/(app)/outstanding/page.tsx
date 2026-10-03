@@ -25,12 +25,22 @@ export default async function OutstandingPage() {
 
   if (partyError) console.error("Parties Error:", partyError);
 
+  // Fetch latest invoices for these parties to link to the invoice
+  const { data: invoicesData } = await supabase
+    .from('invoices')
+    .select('id, party_id')
+    .neq('status', 'cancelled')
+    .in('party_id', outstandingData?.map(r => r.party_id) || [])
+    .order('created_at', { ascending: false });
+
   // Merge the data in JavaScript
   const outstanding = outstandingData?.map(row => {
     const party = partiesData?.find(p => p.id === row.party_id);
+    const latestInvoice = invoicesData?.find(i => i.party_id === row.party_id);
     return {
       ...row,
-      parties: party || { name: 'Unknown', city: '-' }
+      parties: party || { name: 'Unknown', city: '-' },
+      latest_invoice_id: latestInvoice?.id
     };
   }) || [];
 
@@ -84,12 +94,21 @@ export default async function OutstandingPage() {
                     <span className="font-black text-red-600 text-lg mr-2">
                       Rs {Number(row.due_amount).toLocaleString(undefined, {minimumFractionDigits: 2})}
                     </span>
-                    <Link 
-                      href={`/customers/${row.party_id}`}
-                      className="noprint px-3 py-1 bg-blue-100 text-blue-700 hover:bg-blue-600 hover:text-white transition-colors rounded text-sm font-bold"
-                    >
-                      View Ledger
-                    </Link>
+                    {row.latest_invoice_id ? (
+                      <Link 
+                        href={`/invoices/${row.latest_invoice_id}`}
+                        className="noprint px-3 py-1 bg-blue-100 text-blue-700 hover:bg-blue-600 hover:text-white transition-colors rounded text-sm font-bold"
+                      >
+                        View Invoice
+                      </Link>
+                    ) : (
+                      <Link 
+                        href={`/customers/${row.party_id}?tab=invoices`}
+                        className="noprint px-3 py-1 bg-blue-100 text-blue-700 hover:bg-blue-600 hover:text-white transition-colors rounded text-sm font-bold"
+                      >
+                        View Invoices
+                      </Link>
+                    )}
                     <Link 
                       href={`/payments/new?partyId=${row.party_id}&amount=${row.due_amount}`}
                       className="noprint px-3 py-1 bg-emerald-100 text-emerald-700 hover:bg-emerald-600 hover:text-white transition-colors rounded text-sm font-bold"
