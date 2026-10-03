@@ -21,30 +21,16 @@ export default async function ProductDetailsPage({ params }: { params: { id: str
 
   if (!product) return notFound()
 
-  // Fetch Qualities
-  const { data: qualities } = await supabase
-    .from('grades')
-    .select('*')
-    .eq('product_id', id)
-    .is('deleted_at', null)
-    .order('sort_order')
-    .order('created_at')
-
-  // Fetch Sizes
-  const { data: sizes } = await supabase
-    .from('sizes')
-    .select('*')
-    .eq('product_id', id)
-    .is('deleted_at', null)
-    .order('sort_order')
-    .order('created_at')
-
-  // Fetch Variants
-  const { data: variants } = await supabase
-    .from('variants')
-    .select('*, grades(name), sizes(label)')
-    .eq('product_id', id)
-    .is('deleted_at', null)
+  // Fetch related data in parallel
+  const [
+    { data: qualities },
+    { data: sizes },
+    { data: variants }
+  ] = await Promise.all([
+    supabase.from('grades').select('*').eq('product_id', id).is('deleted_at', null).order('sort_order').order('created_at'),
+    supabase.from('sizes').select('*').eq('product_id', id).is('deleted_at', null).order('sort_order').order('created_at'),
+    supabase.from('variants').select('*, grades(name), sizes(label)').eq('product_id', id).is('deleted_at', null)
+  ])
 
   // Fetch Rates
   const variantIds = variants?.map((v: any) => v.id) || []

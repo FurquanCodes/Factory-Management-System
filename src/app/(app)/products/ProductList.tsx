@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { deleteProductAction } from './actions';
 import ConfirmModal from '@/app/components/ConfirmModal';
 
@@ -82,12 +83,13 @@ export default function ProductList({ productList }: { productList: any[] }) {
               </div>
               
               <div className="flex gap-2">
-                <button 
-                  onClick={(e) => { e.stopPropagation(); router.push(`/products/${product.id}`); }}
-                  className="px-5 py-2.5 text-base font-bold bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 hover:text-black rounded-lg shadow-sm transition-all"
+                <Link 
+                  href={`/products/${product.id}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="px-5 py-2.5 text-base font-bold bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 hover:text-black rounded-lg shadow-sm transition-all cursor-pointer inline-block"
                 >
                   Edit Product
-                </button>
+                </Link>
               </div>
             </div>
 
