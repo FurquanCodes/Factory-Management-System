@@ -80,10 +80,16 @@ export default async function OutstandingPage() {
                 </td>
                 <td className="p-4 text-slate-600 font-medium">{row.parties?.city || '-'}</td>
                 <td className="p-4 text-right">
-                  <div className="flex items-center justify-end gap-4">
-                    <span className="font-black text-red-600 text-lg">
+                  <div className="flex items-center justify-end gap-3">
+                    <span className="font-black text-red-600 text-lg mr-2">
                       Rs {Number(row.due_amount).toLocaleString(undefined, {minimumFractionDigits: 2})}
                     </span>
+                    <Link 
+                      href={`/customers/${row.party_id}`}
+                      className="noprint px-3 py-1 bg-blue-100 text-blue-700 hover:bg-blue-600 hover:text-white transition-colors rounded text-sm font-bold"
+                    >
+                      View Ledger
+                    </Link>
                     <Link 
                       href={`/payments/new?partyId=${row.party_id}&amount=${row.due_amount}`}
                       className="noprint px-3 py-1 bg-emerald-100 text-emerald-700 hover:bg-emerald-600 hover:text-white transition-colors rounded text-sm font-bold"
