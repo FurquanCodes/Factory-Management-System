@@ -129,3 +129,15 @@ export async function deleteSizeAction(productId: string, sizeId: string) {
   revalidatePath('/products')
   return { success: true }
 }
+
+export async function deleteVariantAction(productId: string, variantId: string) {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+  const { error } = await supabase.from('variants').update({ deleted_at: new Date().toISOString() }).eq('id', variantId)
+  if (error) throw new Error(error.message)
+  revalidatePath(`/products/${productId}`)
+  revalidatePath('/products')
+  return { success: true }
+}

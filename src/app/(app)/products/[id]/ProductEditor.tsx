@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { addQualityAction, addSizeAction, setRatesAction, deleteQualityAction, deleteSizeAction, deleteProductAction } from '../actions'
+import { addQualityAction, addSizeAction, setRatesAction, deleteQualityAction, deleteSizeAction, deleteProductAction, deleteVariantAction } from '../actions'
 
 export default function ProductEditor({ product, qualities, sizes, variants, rates }: any) {
   const router = useRouter()
@@ -45,6 +45,11 @@ export default function ProductEditor({ product, qualities, sizes, variants, rat
   const handleDeleteSize = async (id: string) => {
     if (!window.confirm("Are you sure? This will remove all prices associated with this size.")) return;
     await deleteSizeAction(product.id, id)
+  }
+
+  const handleDeleteVariant = async (id: string) => {
+    if (!window.confirm("Are you sure you want to delete this specific combination?")) return;
+    await deleteVariantAction(product.id, id)
   }
 
   const handleDeleteProduct = async () => {
@@ -197,6 +202,7 @@ export default function ProductEditor({ product, qualities, sizes, variants, rat
                   <th className="p-3 border border-slate-200 font-bold">Size</th>
                   <th className="p-3 border border-slate-200 font-bold w-48">Price (Rs)</th>
                   <th className="p-3 border border-slate-200 font-bold w-48">Unit</th>
+                  <th className="p-3 border border-slate-200 font-bold w-16 text-center">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -224,6 +230,15 @@ export default function ProductEditor({ product, qualities, sizes, variants, rat
                         <option value="dozen">Per Dozen</option>
                         <option value="piece">Per Piece</option>
                       </select>
+                    </td>
+                    <td className="p-3 border border-slate-200 text-center">
+                      <button 
+                        onClick={() => handleDeleteVariant(v.id)}
+                        className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                        title="Delete Combination"
+                      >
+                        <svg className="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                      </button>
                     </td>
                   </tr>
                 ))}
