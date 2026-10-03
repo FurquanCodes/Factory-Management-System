@@ -1,26 +1,102 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --blue: #1D4ED8;
+    --blue-dark: #1E40AF;
+    --text: #111111;
+    --muted: #6B7280;
+    --line: #D1D5DB;
+    --field-border: #9CA3AF;
+    --grey: #F3F4F6;
+    --danger: #B91C1C;
+    --success: #15803D;
+  }
+
+  body {
+    background-color: #F8FAFC; /* Softer background to make white cards pop */
+    color: var(--text);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* --- REFERENCE PRINT STYLES --- */
+  .paper {background:#fff;color:#111;border:1px solid #9CA3AF;max-width:850px;margin:0 auto;font-size:16px}
+  .ph {background:#1D4ED8;color:#fff;text-align:center;padding:20px 14px}
+  .ph b {font-size:32px;display:block}
+  .pt {text-align:center;font-size:24px;font-weight:bold;letter-spacing:4px;padding:14px 0;border-bottom:2px solid #1D4ED8}
+  .meta {display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;padding:20px 24px}
+  .meta span {color:#6B7280;font-size:14px;display:block}
+  .meta b {font-size:18px}
+  .paper table {width:100%;border-collapse:collapse}
+  .paper th {background:#E5E7EB;color:#111;text-align:left;padding:12px 10px;border:1px solid #9CA3AF;font-size:16px}
+  .paper td {padding:12px 10px;border:1px solid #D1D5DB; font-size:16px;}
+  .r {text-align:right}
+  .tot td {font-weight:bold;font-size:20px;background:#F3F4F6}
+  .foot {display:flex;justify-content:space-between;padding:60px 24px 20px;font-size:16px;color:#6B7280}
+  .foot div {border-top:1px solid #6B7280;padding-top:6px;width:40%;text-align:center}
+  .thanks {text-align:center;font-size:16px;color:#6B7280;padding-bottom:20px}
+  .scroll {overflow-x:auto}
+
+  @media print {
+    /* Setting margin to 0 completely hides the browser's default URL, Date, and Page Number headers/footers */
+    @page { size: A4; margin: 0; }
+    
+    html, body {
+      margin: 0 !important;
+      padding: 0 !important;
+      min-height: 0 !important;
+      height: auto !important;
+      background: white !important;
+    }
+
+    /* Properly collapse all UI elements so they take 0 height */
+    header, nav, .noprint {
+      display: none !important;
+    }
+
+    /* Override tailwind height and padding that causes the blank 2nd page */
+    .min-h-screen { min-height: 0 !important; }
+    .pb-32 { padding-bottom: 0 !important; }
+    .p-4 { padding: 0 !important; }
+
+    /* Make the paper fill the page perfectly */
+    #paper {
+      position: relative !important;
+      margin: 0 !important;
+      padding: 10mm !important;
+      width: 100% !important;
+      max-width: none !important;
+      border: none !important;
+      box-shadow: none !important;
+      page-break-after: avoid !important;
+      page-break-inside: avoid !important;
+    }
+
+    /* Print color adjustments */
+    .ph, .paper th, .tot td { 
+      -webkit-print-color-adjust: exact !important; 
+      print-color-adjust: exact !important; 
+    }
+    
+    tr { break-inside: avoid; }
+    thead { display: table-header-group; }
+    tfoot, .foot { break-inside: avoid; }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
+
+

@@ -1,0 +1,9 @@
+@page { size: A4; margin: 10mm; }
+@media print {
+  .noprint { display: none !important; }       /* hide all app UI */
+  .paper { border: none; max-width: none; margin: 0; }
+  .ph, .paper th, .tot td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  tr { break-inside: avoid; }
+  thead { display: table-header-group; }      /* header row repeats on every page */
+  tfoot, .foot { break-inside: avoid; }
+}
