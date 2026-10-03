@@ -107,6 +107,12 @@ export default function InvoiceForm({ customers, inventory, nextInvoiceNo }: { c
       return;
     }
 
+    if (shouldPrint) {
+      setTimeout(() => {
+        window.print();
+      }, 50);
+    }
+
     startTransition(async () => {
       try {
         const payload = {
@@ -123,10 +129,7 @@ export default function InvoiceForm({ customers, inventory, nextInvoiceNo }: { c
         const result = await saveInvoiceAction(payload);
         if (result.success) {
           if (shouldPrint) {
-            setTimeout(() => {
-              window.print();
-              router.push('/invoices');
-            }, 100);
+            router.push('/invoices');
           } else {
             alert('Invoice saved successfully as Draft!');
             router.push('/invoices');
@@ -147,7 +150,7 @@ export default function InvoiceForm({ customers, inventory, nextInvoiceNo }: { c
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [items, selectedCustomer, walkinName, walkinCity, totalAmount]);
+  }, [items, selectedCustomer, walkinName, walkinCity, totalAmount, paymentStatus, paymentMethod, saveNewCustomer, customerMode]);
   
   // Get customer info for preview
   const custObj = customers.find(c => c.id === selectedCustomer);
