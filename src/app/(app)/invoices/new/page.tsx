@@ -35,12 +35,15 @@ export default async function NewInvoicePage() {
       }))
     }
   }) || []
+  // Fetch next invoice number
+  const { data: counters } = await supabase.from('invoice_counters').select('last_no').limit(1)
+  const nextInvoiceNo = counters && counters.length > 0 ? counters[0].last_no + 1 : 1
   
   return (
     <div className="w-full min-h-screen bg-slate-50 pt-8">
       {/* Main Form Area */}
       <div className="px-4">
-        <InvoiceForm customers={customers || []} inventory={inventory} />
+        <InvoiceForm customers={customers || []} inventory={inventory} nextInvoiceNo={nextInvoiceNo} />
       </div>
     </div>
   )

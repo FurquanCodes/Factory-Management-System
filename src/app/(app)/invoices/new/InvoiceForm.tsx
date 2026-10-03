@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import '@/app/print.css';
 import { saveInvoiceAction } from '../actions';
 
-export default function InvoiceForm({ customers, inventory }: { customers: any[], inventory: any[] }) {
+export default function InvoiceForm({ customers, inventory, nextInvoiceNo }: { customers: any[], inventory: any[], nextInvoiceNo: number }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [customerMode, setCustomerMode] = useState<'old' | 'new'>('old');
@@ -418,7 +418,7 @@ export default function InvoiceForm({ customers, inventory }: { customers: any[]
         
         <div className="meta">
           <div><span>Customer Name</span><b id="pc">{custName}</b></div>
-          <div><span>Invoice No</span><b id="pn">Auto Generated</b></div>
+          <div><span>Invoice No</span><b id="pn">{nextInvoiceNo}</b></div>
           <div><span>City</span><b id="py">{custCity}</b></div>
           <div><span>Invoice Date</span><b id="pd">{dateStr}</b></div>
         </div>
