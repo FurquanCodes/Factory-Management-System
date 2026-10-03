@@ -63,14 +63,14 @@ export default async function InvoiceViewPage({ params }: { params: Promise<{ id
         
         {/* PAID/DUE Stamp Overlay */}
         {invoice.status === 'final' && isPaid && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none" style={{ opacity: 0.15 }}>
+          <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none" style={{ opacity: 0.08 }}>
             <div className="text-emerald-700 border-[10px] border-emerald-700 rounded-2xl px-16 py-6 font-black tracking-[0.2em] uppercase transform -rotate-45" style={{ fontSize: '120px', lineHeight: '1' }}>
               PAID
             </div>
           </div>
         )}
         {invoice.status === 'final' && !isPaid && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none" style={{ opacity: 0.15 }}>
+          <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none" style={{ opacity: 0.08 }}>
             <div className="text-blue-700 border-[10px] border-blue-700 rounded-2xl px-16 py-6 font-black tracking-[0.2em] uppercase transform -rotate-45" style={{ fontSize: '120px', lineHeight: '1' }}>
               DUE
             </div>
