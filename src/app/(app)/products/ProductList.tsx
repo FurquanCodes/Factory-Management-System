@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { deleteProductAction } from './actions';
+import ConfirmModal from '@/app/components/ConfirmModal';
 
 export default function ProductList({ productList }: { productList: any[] }) {
   const router = useRouter();
@@ -12,14 +13,29 @@ export default function ProductList({ productList }: { productList: any[] }) {
     setExpandedId(expandedId === id ? null : id);
   };
 
+  const [modalConfig, setModalConfig] = useState({
+    isOpen: false,
+    productId: '',
+    title: '',
+    message: ''
+  });
+
   const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    if (window.confirm("Are you sure you want to delete this product? All its qualities, sizes, and prices will be removed.")) {
-      try {
-        await deleteProductAction(id);
-      } catch (err: any) {
-        alert("Failed to delete product: " + err.message);
-      }
+    setModalConfig({
+      isOpen: true,
+      productId: id,
+      title: 'Delete Product',
+      message: 'Are you sure you want to delete this product? All its qualities, sizes, and prices will be removed.'
+    });
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await deleteProductAction(modalConfig.productId);
+      setModalConfig(prev => ({ ...prev, isOpen: false }));
+    } catch (err: any) {
+      alert("Failed to delete product: " + err.message);
     }
   };
 
@@ -146,6 +162,16 @@ export default function ProductList({ productList }: { productList: any[] }) {
           </div>
         );
       })}
+
+      <ConfirmModal 
+        isOpen={modalConfig.isOpen}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        onConfirm={confirmDelete}
+        onCancel={() => setModalConfig(prev => ({ ...prev, isOpen: false }))}
+        confirmText="Delete"
+        isDanger={true}
+      />
     </div>
   );
 }

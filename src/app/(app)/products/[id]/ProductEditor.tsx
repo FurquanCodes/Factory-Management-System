@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { addQualityAction, addSizeAction, setRatesAction, deleteQualityAction, deleteSizeAction, deleteProductAction, deleteVariantAction } from '../actions'
+import ConfirmModal from '@/app/components/ConfirmModal'
 
 export default function ProductEditor({ product, qualities, sizes, variants, rates }: any) {
   const router = useRouter()
@@ -25,6 +26,25 @@ export default function ProductEditor({ product, qualities, sizes, variants, rat
   const [isSaving, setIsSaving] = useState(false)
   const [saveMessage, setSaveMessage] = useState('')
 
+  const [modalConfig, setModalConfig] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: async () => {}
+  })
+
+  const confirmAction = (title: string, message: string, action: () => Promise<void>) => {
+    setModalConfig({
+      isOpen: true,
+      title,
+      message,
+      onConfirm: async () => {
+        setModalConfig(prev => ({ ...prev, isOpen: false }))
+        await action()
+      }
+    })
+  }
+
   const handleAddQuality = async () => {
     if (!newQuality) return
     await addQualityAction(product.id, newQuality)
@@ -37,31 +57,45 @@ export default function ProductEditor({ product, qualities, sizes, variants, rat
     setNewSize('')
   }
 
-  const handleDeleteQuality = async (id: string) => {
-    if (!window.confirm("Are you sure? This will remove all prices associated with this quality.")) return;
-    await deleteQualityAction(product.id, id)
+  const handleDeleteQuality = (id: string) => {
+    confirmAction(
+      "Delete Quality",
+      "Are you sure? This will remove all prices associated with this quality.",
+      async () => await deleteQualityAction(product.id, id)
+    )
   }
 
-  const handleDeleteSize = async (id: string) => {
-    if (!window.confirm("Are you sure? This will remove all prices associated with this size.")) return;
-    await deleteSizeAction(product.id, id)
+  const handleDeleteSize = (id: string) => {
+    confirmAction(
+      "Delete Size",
+      "Are you sure? This will remove all prices associated with this size.",
+      async () => await deleteSizeAction(product.id, id)
+    )
   }
 
-  const handleDeleteVariant = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this specific combination?")) return;
-    await deleteVariantAction(product.id, id)
+  const handleDeleteVariant = (id: string) => {
+    confirmAction(
+      "Delete Combination",
+      "Are you sure you want to delete this specific quality and size combination?",
+      async () => await deleteVariantAction(product.id, id)
+    )
   }
 
-  const handleDeleteProduct = async () => {
-    if (!window.confirm("Are you SURE you want to delete this entire product? This will remove all its qualities, sizes, and prices.")) return;
-    setIsSaving(true);
-    try {
-      await deleteProductAction(product.id);
-      router.push('/products');
-    } catch (e: any) {
-      alert("Failed to delete product: " + e.message);
-      setIsSaving(false);
-    }
+  const handleDeleteProduct = () => {
+    confirmAction(
+      "Delete Product",
+      "Are you SURE you want to delete this entire product? This will remove all its qualities, sizes, and prices.",
+      async () => {
+        setIsSaving(true);
+        try {
+          await deleteProductAction(product.id);
+          router.push('/products');
+        } catch (e: any) {
+          alert("Failed to delete product: " + e.message);
+          setIsSaving(false);
+        }
+      }
+    )
   }
 
   const handleSavePrices = async () => {
@@ -263,6 +297,16 @@ export default function ProductEditor({ product, qualities, sizes, variants, rat
           </button>
         </div>
       </div>
+
+      <ConfirmModal 
+        isOpen={modalConfig.isOpen}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        onConfirm={modalConfig.onConfirm}
+        onCancel={() => setModalConfig(prev => ({ ...prev, isOpen: false }))}
+        confirmText="Delete"
+        isDanger={true}
+      />
     </div>
   )
 }
