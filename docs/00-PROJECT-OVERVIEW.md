@@ -1,0 +1,75 @@
+# 00. Project Overview
+
+## 1. The product in one paragraph
+A web-based **factory management system** (a digital register) for small manufacturers in Pakistan. First client: **A One Sanitory Ware, Gujranwala** (makes clamps). The software replaces paper registers and Google Sheets for: price lists, invoices, customer accounts (ledger), workers and production, stock, raw material, costing/profit and reports. It will later be **sold to other factories**, so it is **multi-tenant SaaS**: one codebase and database, many client organizations, each seeing only its own data.
+
+## 2. Users
+| User | Description | Skill |
+|---|---|---|
+| **Super Admin** | The software owner. Manages client organizations. Cannot see/edit clients' business data. | Technical |
+| **Admin** (client owner) | Factory owner/manager. Full access to own organization. Sets product prices. | **Non-technical** |
+| **Employee** | Staff. Limited by permissions (e.g. create invoices, enter production). | **Non-technical** |
+
+Because users are non-technical: big buttons, few fields, choose from dropdowns instead of typing, plain-language messages, no jargon.
+
+## 3. Priority
+**Invoice first.** The client needs invoices soon. Build order: Foundation -> Products and Prices -> Customers -> **Invoice (complete, printable)** -> Payments/Ledger -> everything else. See `03-BUILD-STEPS.md`.
+
+## 4. Business glossary
+| Term | Meaning |
+|---|---|
+| Party / Customer | A buyer, always with a **city**. Dealers/distributors are also parties (type `dealer`). On an invoice the user filters customers by city, or types a one-time customer. |
+| Product | A clamp type: U Clump, Naala Clump, Connection Clump, Kili Clump, Hanging Clump (client-defined, never hard-coded). |
+| Quality (grade) | Light, Common, Medium, Heavy, Super Heavy, Med Golden... per product. |
+| Size | A TEXT label like `1/2`, `1"`, `1*1/2`, `1*1/2*3/4`. Never a number. |
+| Variant | One combination of product + quality + size. Prices, invoices and stock all point to a variant. |
+| Unit | How a variant is sold and priced: **Dozen** or **Per Piece**. Saved with the price in Products (see 5). |
+| BF | Balance Forward: opening balance of a party. |
+| Due amount | What a party still owes (running balance). |
+| Organization | One client company (tenant). |
+
+## 5. THE quantity and price rule (decided, do not change)
+- Every variant (product + quality + size) has **ONE price and ONE unit: Dozen or Per Piece**, saved by Admin in the Products screen. Example: U Clump Light 1/2 = 37 per **Dozen**; U Clump Super Heavy 1/2 = 17 per **Piece**.
+- On the invoice, after the user chooses Product, Quality and Size, the **price and its unit appear automatically and read-only** (e.g. `375 / Dozen`). The user types only the **Quantity** (the box is labelled `Quantity (Dozen)` or `Quantity (Pcs)`).
+- **Amount = Quantity x Price.** The unit is just a label; there is no conversion between dozen and piece, and no "dozens plus loose pieces" on one line.
+- Quantities are whole numbers.
+- Examples: 33 Dozen x 375 = 12,375; 100 Pcs x 110 = 11,000.
+
+## 6. Modules (all, in final product)
+1. **Products and Prices**: products, qualities, sizes, variants, one price and one unit (dozen or piece) per variant (admin only edits).
+2. **Customers (Parties)**: records, opening balance.
+3. **Invoice**: create, print A4/PDF, cancel. **(Phase 4, spec in `04`)**
+4. **Payments and Party Ledger**: received money, running due amount, outstanding list.
+5. **Workers and Production**: daily/worker-wise production, labour, advances, balance.
+6. **Finished Goods Stock**: by variant, movements history.
+7. **Raw Material**: purchase, usage, stock, low-stock alert.
+8. **Costing and Profit/Loss**.
+9. **Reports**: daily production, raw material stock, finished stock, sales, party ledger, worker report, profit/loss, monthly and yearly summary.
+10. **Security**: roles, permissions, audit history, automatic backup.
+11. **Super Admin panel**: manage client organizations.
+12. **Marketing** (last): customer database extras, dealer management, WhatsApp list, follow-ups.
+
+## 7. Non-negotiable requirements
+- Web app, works on **mobile and desktop** (mobile first; most use is on phones).
+- **English and Urdu** (Urdu = right-to-left layout, proper Urdu font).
+- Simple UI: **plain white background, solid blue / grey / black only**, no gradients, no dark mode, no decoration. Look = `reference/invoice-example.html`.
+- Secure login. Users are created by admins (no public sign-up).
+- Edit/delete history (audit log) and automatic backup.
+- **Invoice must print perfectly on A4 and save as PDF.**
+
+## 8. Decisions already made (do not re-discuss)
+- Stack: Next.js + TypeScript + Supabase (PostgreSQL) + Tailwind, hosted on Vercel + Supabase. (`01`)
+- One database, `organization_id` on every business table, enforced by Row Level Security.
+- Invoice numbers: automatic, sequential per organization, no duplicates, no gaps. A One starts at **95**.
+- Invoice number and date are generated by the system and are **read-only** to the user.
+- Prices are set only by Admin on the Products screen and are read-only on invoices.
+- Final invoices cannot be edited. To correct one: cancel it and create a new one.
+- Soft delete everywhere (never hard-delete business data).
+- Currency PKR. Date format DD-MM-YYYY. Time zone Asia/Karachi.
+- Business name, address, phone, logo, invoice footer come from organization settings, never hard-coded.
+
+## 9. Sample data of the first client (for seed/testing only)
+Real data received from the client is in `data/` (`products-import.csv` with the real rate lists, `customers-import.csv` with 42 customers/distributors in Rawalpindi, Peshawar, Gujranwala, Mansehra). Import them with the CSV import (`05`); `reference/invoice-example.html` uses the same data. Hanging Clump prices are not final and are NOT included.
+Real invoice used as acceptance test (customer MAT, date 05-02-2026, invoice 94): 
+33 Dozen Kili Clump 1/2 at 375 = 12,375; 96 Dozen Kili Clump 3/4 at 375 = 36,000; 96 Dozen Kili Clump 1" at 415 = 39,840; 100 Pcs P Clump 3" at 110 = 11,000; **Total 99,215**.
+Party ledger format of the client: Date, Details (Cash / Bill no / BF), Received Amount, Bill Amount, Due Amount (running).

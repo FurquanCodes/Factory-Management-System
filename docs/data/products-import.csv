@@ -1,0 +1,149 @@
+﻿product,quality,size,price,unit
+U Clump,Light,1/2,37,dozen
+U Clump,Light,3/4,37,dozen
+U Clump,Light,"1""",45,dozen
+U Clump,Light,1*1/4,55,dozen
+U Clump,Light,1*1/2,75,dozen
+U Clump,Light,"2""",90,dozen
+U Clump,Light,"3""",110,dozen
+U Clump,Light,"4""",130,dozen
+U Clump,Common,1/2,42,dozen
+U Clump,Common,3/4,42,dozen
+U Clump,Common,"1""",52,dozen
+U Clump,Common,1*1/4,67,dozen
+U Clump,Common,1*1/2,82,dozen
+U Clump,Common,"2""",100,dozen
+U Clump,Common,"3""",120,dozen
+U Clump,Common,"4""",140,dozen
+U Clump,Common,"5""",350,dozen
+U Clump,Common,"6""",400,dozen
+U Clump,Medium,1/2,80,dozen
+U Clump,Medium,3/4,80,dozen
+U Clump,Medium,"1""",95,dozen
+U Clump,Medium,1*1/4,110,dozen
+U Clump,Medium,1*1/2,130,dozen
+U Clump,Medium,"2""",140,dozen
+U Clump,Medium,"3""",165,dozen
+U Clump,Medium,"4""",195,dozen
+U Clump,Medium,"5""",400,dozen
+U Clump,Medium,"6""",450,dozen
+U Clump,Heavy,1/2,120,dozen
+U Clump,Heavy,3/4,120,dozen
+U Clump,Heavy,"1""",145,dozen
+U Clump,Heavy,1*1/4,170,dozen
+U Clump,Heavy,1*1/2,195,dozen
+U Clump,Heavy,"2""",213,dozen
+U Clump,Heavy,"3""",265,dozen
+U Clump,Heavy,"4""",320,dozen
+U Clump,Super Heavy,1/2,17,piece
+U Clump,Super Heavy,3/4,17,piece
+U Clump,Super Heavy,"1""",20,piece
+U Clump,Super Heavy,1*1/4,23,piece
+U Clump,Super Heavy,1*1/2,28,piece
+U Clump,Super Heavy,"2""",33,piece
+U Clump,Super Heavy,"3""",40,piece
+U Clump,Super Heavy,"4""",45,piece
+U Clump,Super Heavy,"5""",55,piece
+U Clump,Super Heavy,"6""",65,piece
+Naala Clump,Light,1/2,37,dozen
+Naala Clump,Light,3/4,37,dozen
+Naala Clump,Light,"1""",45,dozen
+Naala Clump,Light,1*1/4,55,dozen
+Naala Clump,Light,1*1/2,75,dozen
+Naala Clump,Light,"2""",90,dozen
+Naala Clump,Light,"3""",110,dozen
+Naala Clump,Light,"4""",130,dozen
+Naala Clump,Common,1/2,42,dozen
+Naala Clump,Common,3/4,42,dozen
+Naala Clump,Common,"1""",52,dozen
+Naala Clump,Common,1*1/4,67,dozen
+Naala Clump,Common,1*1/2,82,dozen
+Naala Clump,Common,"2""",100,dozen
+Naala Clump,Common,"3""",120,dozen
+Naala Clump,Common,"4""",140,dozen
+Naala Clump,Common,"5""",350,dozen
+Naala Clump,Common,"6""",400,dozen
+Naala Clump,Medium,1/2,80,dozen
+Naala Clump,Medium,3/4,80,dozen
+Naala Clump,Medium,"1""",95,dozen
+Naala Clump,Medium,1*1/4,110,dozen
+Naala Clump,Medium,1*1/2,130,dozen
+Naala Clump,Medium,"2""",140,dozen
+Naala Clump,Medium,"3""",165,dozen
+Naala Clump,Medium,"4""",195,dozen
+Naala Clump,Medium,"5""",400,dozen
+Naala Clump,Medium,"6""",450,dozen
+Naala Clump,Heavy,1/2,120,dozen
+Naala Clump,Heavy,3/4,120,dozen
+Naala Clump,Heavy,"1""",145,dozen
+Naala Clump,Heavy,1*1/4,170,dozen
+Naala Clump,Heavy,1*1/2,195,dozen
+Naala Clump,Heavy,"2""",213,dozen
+Naala Clump,Heavy,"3""",265,dozen
+Naala Clump,Heavy,"4""",320,dozen
+Naala Clump,Super Heavy,1/2,17,piece
+Naala Clump,Super Heavy,3/4,17,piece
+Naala Clump,Super Heavy,"1""",20,piece
+Naala Clump,Super Heavy,1*1/4,23,piece
+Naala Clump,Super Heavy,1*1/2,28,piece
+Naala Clump,Super Heavy,"2""",33,piece
+Naala Clump,Super Heavy,"3""",40,piece
+Naala Clump,Super Heavy,"4""",45,piece
+Naala Clump,Super Heavy,"5""",55,piece
+Naala Clump,Super Heavy,"6""",65,piece
+Connection Clump,Medium Golden,1*1/2,1080,dozen
+Connection Clump,Medium Golden,3*1/2,1330,dozen
+Connection Clump,Medium Golden,4*1/2,1480,dozen
+Connection Clump,Medium Golden,1*1/2*1/2,1100,dozen
+Connection Clump,Medium Golden,1*1/2*3/4,1250,dozen
+Connection Clump,Medium Golden,2*3/4,1330,dozen
+Connection Clump,Medium Golden,3*3/4,1480,dozen
+Connection Clump,Medium Golden,4*3/4,1630,dozen
+Connection Clump,Medium Golden,5*1/2,1900,dozen
+Connection Clump,Medium Golden,5*3/4,2100,dozen
+Connection Clump,Medium Golden,6*1/2,2000,dozen
+Connection Clump,Medium Golden,6*3/4,2200,dozen
+Connection Clump,Heavy,1*1/2,145,piece
+Connection Clump,Heavy,3*1/2,175,piece
+Connection Clump,Heavy,4*1/2,200,piece
+Connection Clump,Heavy,1*1/2*1/2,135,piece
+Connection Clump,Heavy,1*1/2*3/4,150,piece
+Connection Clump,Heavy,2*3/4,160,piece
+Connection Clump,Heavy,3*3/4,195,piece
+Connection Clump,Heavy,4*3/4,220,piece
+Connection Clump,Super Heavy,1*1/2,180,piece
+Connection Clump,Super Heavy,3*1/2,205,piece
+Connection Clump,Super Heavy,4*1/2,225,piece
+Connection Clump,Super Heavy,1*1/2*1/2,165,piece
+Connection Clump,Super Heavy,1*1/2*3/4,185,piece
+Connection Clump,Super Heavy,2*3/4,200,piece
+Connection Clump,Super Heavy,3*3/4,225,piece
+Connection Clump,Super Heavy,4*3/4,245,piece
+Kili Clump,Medium,1/2,400,dozen
+Kili Clump,Medium,3/4,500,dozen
+Kili Clump,Medium,"1""",600,dozen
+Kili Clump,Medium,1*1/4,700,dozen
+Kili Clump,Medium,1*1/2,800,dozen
+Kili Clump,Medium,"2""",900,dozen
+Kili Clump,Medium,"3""",1000,dozen
+Kili Clump,Medium,"4""",1100,dozen
+Kili Clump,Medium,"5""",1200,dozen
+Kili Clump,Medium,"6""",1300,dozen
+Kili Clump,Heavy,1/2,200,dozen
+Kili Clump,Heavy,3/4,300,dozen
+Kili Clump,Heavy,"1""",400,dozen
+Kili Clump,Heavy,1*1/4,500,dozen
+Kili Clump,Heavy,1*1/2,600,dozen
+Kili Clump,Heavy,"2""",700,dozen
+Kili Clump,Heavy,"3""",800,dozen
+Kili Clump,Heavy,"4""",900,dozen
+Kili Clump,Super Heavy,1/2,20,piece
+Kili Clump,Super Heavy,3/4,25,piece
+Kili Clump,Super Heavy,"1""",30,piece
+Kili Clump,Super Heavy,1*1/4,40,piece
+Kili Clump,Super Heavy,1*1/2,50,piece
+Kili Clump,Super Heavy,"2""",55,piece
+Kili Clump,Super Heavy,"3""",60,piece
+Kili Clump,Super Heavy,"4""",70,piece
+Kili Clump,Super Heavy,"5""",80,piece
+Kili Clump,Super Heavy,"6""",90,piece

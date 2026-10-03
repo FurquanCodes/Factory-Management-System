@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<!-- LOOK REFERENCE ONLY (white page, blue/grey/black, cards, print paper). Its quantity/price logic is OUTDATED. Follow docs/04-INVOICE-MODULE.md: one price + one unit (Dozen or Piece) per item, a single Quantity per line. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>Invoice Example</title>
+<style>
+:root{--blue:#1D4ED8;--blue-d:#1E40AF;--line:#D1D5DB;--grey:#F3F4F6;--muted:#6B7280;--text:#111;--red:#B91C1C;--green:#15803D;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:#fff;color:var(--text);font:16px/1.4 Arial,Helvetica,sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:12px}
+h1{font-size:20px;margin:8px 0 12px}
+.card{border:1px solid var(--line);border-radius:6px;padding:14px;margin-bottom:12px}
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+select,input[type=text],input[type=number],input:not([type]){width:100%;min-height:44px;font-size:16px;padding:8px;border:1px solid #9CA3AF;border-radius:4px;background:#fff;color:var(--text)}
+select:focus,input:focus{outline:2px solid var(--blue)}
+input[readonly]{background:var(--grey);font-weight:bold}
+.row{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:640px){.row.c2{grid-template-columns:1fr 1fr}.row.c3{grid-template-columns:repeat(3,1fr)}}
+.rad{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:10px}
+.rad label{display:flex;align-items:center;gap:6px;font-size:16px;color:var(--text);margin:0}
+.rad input{width:20px;min-height:20px}
+.line{border:1px solid var(--line);border-radius:4px;padding:10px;margin-bottom:10px}
+.line .row{grid-template-columns:1fr 1fr}
+.line .full{grid-column:1/-1}
+@media(min-width:640px){.line .row{grid-template-columns:repeat(4,1fr)}.line .full{grid-column:span 2}}
+.pr{background:var(--grey);border:1px solid var(--line);border-radius:4px;min-height:44px;padding:10px 8px;font-weight:bold}
+.lf{display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:8px}
+.amt{font-weight:bold;font-size:18px}
+.sub{font-size:12px;color:var(--muted)}
+button{min-height:44px;padding:0 16px;font-size:16px;border-radius:4px;border:1px solid var(--blue);background:var(--blue);color:#fff;cursor:pointer}
+button:hover{background:var(--blue-d)}
+button.sec{background:#fff;color:var(--blue)}
+button.sec.on{background:var(--blue);color:#fff}
+button.del{background:#fff;color:var(--red);border-color:var(--red);min-height:36px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.err{color:var(--red);font-size:14px;min-height:20px;margin-top:6px}
+.ok{color:var(--green);font-size:14px;min-height:20px;margin-top:6px}
+.note{font-size:13px;color:var(--muted)}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{background:var(--grey);text-align:left;padding:8px;border:1px solid var(--line);font-size:13px}
+.tbl td{padding:4px 6px;border:1px solid var(--line)}
+.tbl input,.tbl select{min-height:38px}
+.scroll{overflow-x:auto}
+.paper{background:#fff;color:#111;border:1px solid #9CA3AF;max-width:794px;margin:0 auto;font-size:14px}
+.ph{background:#1D4ED8;color:#fff;text-align:center;padding:16px 10px}
+.ph b{font-size:26px;display:block}
+.pt{text-align:center;font-size:20px;font-weight:bold;letter-spacing:3px;padding:10px 0;border-bottom:2px solid #1D4ED8}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;padding:12px 16px}
+.meta span{color:#6B7280;font-size:12px;display:block}
+.meta b{font-size:15px}
+.paper table{width:100%;border-collapse:collapse}
+.paper th{background:#E5E7EB;color:#111;text-align:left;padding:8px;border:1px solid #9CA3AF;font-size:13px}
+.paper td{padding:7px 8px;border:1px solid #D1D5DB}
+.r{text-align:right}
+.tot td{font-weight:bold;font-size:16px;background:#F3F4F6}
+.foot{display:flex;justify-content:space-between;padding:40px 16px 14px;font-size:12px;color:#6B7280}
+.foot div{border-top:1px solid #6B7280;padding-top:4px;width:40%;text-align:center}
+.thanks{text-align:center;font-size:12px;color:#6B7280;padding-bottom:14px}
+tr{break-inside:avoid}thead{display:table-header-group}
+@media print{
+ @page{size:A4;margin:10mm}
+ .noprint{display:none!important}
+ .wrap{padding:0;max-width:none}.paper{border:none;max-width:none}
+ .ph,.paper th,.tot td{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="noprint">
+ <div class="bar" style="margin:0 0 10px">
+  <button class="sec on" id="t1" type="button">Invoice</button>
+  <button class="sec" id="t2" type="button">Products and Prices</button>
+  <button class="sec" id="t3" type="button">Customers</button>
+ </div>
+
+ <div id="v1">
+  <h1>New Invoice</h1>
+  <div class="card">
+   <div class="rad">
+    <label><input type="radio" name="cm" value="old" checked> Existing customer</label>
+    <label><input type="radio" name="cm" value="new"> New customer (type name)</label>
+   </div>
+   <div id="cOld" class="row c2">
+    <div><label for="fc">City</label><select id="fc"></select></div>
+    <div><label for="cust">Customer</label><select id="cust"></select></div>
+   </div>
+   <div id="cNew" style="display:none">
+    <div class="row c2">
+     <div><label for="nc">City</label><input id="nc" list="dl" placeholder="City"></div>
+     <div><label for="nn">Customer Name</label><input id="nn" placeholder="Customer name"></div>
+    </div>
+    <div class="bar"><button class="sec" id="savec" type="button">Save to Customers (optional)</button></div>
+   </div>
+   <div class="ok" id="cmsg"></div>
+   <div class="row c2" style="margin-top:6px">
+    <div><label for="no">Invoice No (auto)</label><input id="no" readonly></div>
+    <div><label for="dt">Invoice Date (auto)</label><input id="dt" readonly></div>
+   </div>
+  </div>
+  <div class="card">
+   <label>Items</label>
+   <div id="lines"></div>
+   <div class="bar"><button class="sec" id="add" type="button">+ Add Item</button></div>
+  </div>
+  <div class="bar" style="margin-bottom:6px">
+   <button id="print" type="button">Print Invoice</button>
+   <button class="sec" id="new" type="button">New Invoice</button>
+  </div>
+  <div class="err" id="err"></div>
+  <p class="note">Choose a city to see only that city's customers, or choose "New customer" to type a name and city for a one-time buyer. Prices come from the Products screen and cannot be typed here. Amount = (Dozen x Price of 1 Dozen) + (Pcs x Price of 1 Piece).</p>
+  <h1>Invoice Preview</h1>
+ </div>
+
+ <div id="v2" style="display:none">
+  <h1>Products and Prices</h1>
+  <div class="card">
+   <label for="fp">Product</label><select id="fp"></select>
+   <p class="note">Admin can change the price of 1 dozen and the price of 1 piece. The new price replaces the old one for new invoices. Real software also lets you add, rename and deactivate products, qualities and sizes. Empty = price not set.</p>
+   <div class="scroll"><table class="tbl"><thead><tr><th>Quality</th><th>Size</th><th>Price of 1 Dozen</th><th>Price of 1 Piece</th></tr></thead><tbody id="pt2"></tbody></table></div>
+   <div class="ok" id="ok"></div>
+  </div>
+ </div>
+
+ <div id="v3" style="display:none">
+  <h1>Customers</h1>
+  <div class="card">
+   <div class="row c3">
+    <div><label for="an">Name</label><input id="an" placeholder="Customer name"></div>
+    <div><label for="ac">City</label><input id="ac" list="dl" placeholder="City"></div>
+    <div><label for="at">Type</label><select id="at"><option value="customer">Customer</option><option value="dealer">Dealer / Distributor</option></select></div>
+   </div>
+   <div class="bar"><button id="addc" type="button">Add Customer</button></div>
+   <div class="err" id="cerr"></div>
+  </div>
+  <div class="card">
+   <label for="ctf">Show city</label><select id="ctf"></select>
+   <p class="note" id="ccount"></p>
+   <div class="scroll"><table class="tbl"><thead><tr><th>Name</th><th>City</th><th>Type</th><th></th></tr></thead><tbody id="ctb"></tbody></table></div>
+  </div>
+ </div>
+</div>
+<datalist id="dl"></datalist>
+
+<div class="paper" id="paper">
+ <div class="ph"><b>A One Sanitory Ware</b><span>Hafizabad Road, Gujranwala</span></div>
+ <div class="pt">INVOICE</div>
+ <div class="meta">
+  <div><span>Customer Name</span><b id="pc">-</b></div>
+  <div><span>Invoice No</span><b id="pn">-</b></div>
+  <div><span>City</span><b id="py">-</b></div>
+  <div><span>Invoice Date</span><b id="pd">-</b></div>
+ </div>
+ <div class="scroll">
+ <table>
+  <thead><tr><th style="width:44px">Sr</th><th>Description of Goods</th><th class="r">Qty</th><th class="r">Price</th><th class="r">Amount</th></tr></thead>
+  <tbody id="pb"></tbody>
+  <tfoot><tr class="tot"><td colspan="4" class="r">Total Amount</td><td class="r" id="pt">0</td></tr></tfoot>
+ </table>
+ </div>
+ <div class="foot"><div>Customer Signature</div><div>Authorized Signature</div></div>
+ <div class="thanks">Thank you for your business</div>
+</div>
+</div>
+<script>
+/* real rate lists from the client; Hanging Clump excluded (not final). Prices: [dozen, piece] */
+var D=[{"n":"U Clump","g":[{"n":"Light","r":{"1/2":[37,null],"3/4":[37,null],"1\"":[45,null],"1*1/4":[55,null],"1*1/2":[75,null],"2\"":[90,null],"3\"":[110,null],"4\"":[130,null]}},{"n":"Common","r":{"1/2":[42,null],"3/4":[42,null],"1\"":[52,null],"1*1/4":[67,null],"1*1/2":[82,null],"2\"":[100,null],"3\"":[120,null],"4\"":[140,null],"5\"":[350,null],"6\"":[400,null]}},{"n":"Medium","r":{"1/2":[80,null],"3/4":[80,null],"1\"":[95,null],"1*1/4":[110,null],"1*1/2":[130,null],"2\"":[140,null],"3\"":[165,null],"4\"":[195,null],"5\"":[400,null],"6\"":[450,null]}},{"n":"Heavy","r":{"1/2":[120,null],"3/4":[120,null],"1\"":[145,null],"1*1/4":[170,null],"1*1/2":[195,null],"2\"":[213,null],"3\"":[265,null],"4\"":[320,null]}},{"n":"Super Heavy","r":{"1/2":[204,17],"3/4":[204,17],"1\"":[240,20],"1*1/4":[276,23],"1*1/2":[336,28],"2\"":[396,33],"3\"":[480,40],"4\"":[540,45],"5\"":[660,55],"6\"":[780,65]}}]},{"n":"Naala Clump","g":[{"n":"Light","r":{"1/2":[37,null],"3/4":[37,null],"1\"":[45,null],"1*1/4":[55,null],"1*1/2":[75,null],"2\"":[90,null],"3\"":[110,null],"4\"":[130,null]}},{"n":"Common","r":{"1/2":[42,null],"3/4":[42,null],"1\"":[52,null],"1*1/4":[67,null],"1*1/2":[82,null],"2\"":[100,null],"3\"":[120,null],"4\"":[140,null],"5\"":[350,null],"6\"":[400,null]}},{"n":"Medium","r":{"1/2":[80,null],"3/4":[80,null],"1\"":[95,null],"1*1/4":[110,null],"1*1/2":[130,null],"2\"":[140,null],"3\"":[165,null],"4\"":[195,null],"5\"":[400,null],"6\"":[450,null]}},{"n":"Heavy","r":{"1/2":[120,null],"3/4":[120,null],"1\"":[145,null],"1*1/4":[170,null],"1*1/2":[195,null],"2\"":[213,null],"3\"":[265,null],"4\"":[320,null]}},{"n":"Super Heavy","r":{"1/2":[204,17],"3/4":[204,17],"1\"":[240,20],"1*1/4":[276,23],"1*1/2":[336,28],"2\"":[396,33],"3\"":[480,40],"4\"":[540,45],"5\"":[660,55],"6\"":[780,65]}}]},{"n":"Connection Clump","g":[{"n":"Medium Golden","r":{"1*1/2":[1080,null],"3*1/2":[1330,null],"4*1/2":[1480,null],"1*1/2*1/2":[1100,null],"1*1/2*3/4":[1250,null],"2*3/4":[1330,null],"3*3/4":[1480,null],"4*3/4":[1630,null],"5*1/2":[1900,null],"5*3/4":[2100,null],"6*1/2":[2000,null],"6*3/4":[2200,null]}},{"n":"Heavy","r":{"1*1/2":[1740,145],"3*1/2":[2100,175],"4*1/2":[2400,200],"1*1/2*1/2":[1620,135],"1*1/2*3/4":[1800,150],"2*3/4":[1920,160],"3*3/4":[2340,195],"4*3/4":[2640,220]}},{"n":"Super Heavy","r":{"1*1/2":[2160,180],"3*1/2":[2460,205],"4*1/2":[2700,225],"1*1/2*1/2":[1980,165],"1*1/2*3/4":[2220,185],"2*3/4":[2400,200],"3*3/4":[2700,225],"4*3/4":[2940,245]}}]},{"n":"Kili Clump","g":[{"n":"Medium","r":{"1/2":[400,null],"3/4":[500,null],"1\"":[600,null],"1*1/4":[700,null],"1*1/2":[800,null],"2\"":[900,null],"3\"":[1000,null],"4\"":[1100,null],"5\"":[1200,null],"6\"":[1300,null]}},{"n":"Heavy","r":{"1/2":[200,null],"3/4":[300,null],"1\"":[400,null],"1*1/4":[500,null],"1*1/2":[600,null],"2\"":[700,null],"3\"":[800,null],"4\"":[900,null]}},{"n":"Super Heavy","r":{"1/2":[240,20],"3/4":[300,25],"1\"":[360,30],"1*1/4":[480,40],"1*1/2":[600,50],"2\"":[660,55],"3\"":[720,60],"4\"":[840,70],"5\"":[960,80],"6\"":[1080,90]}}]}];
+var C=[{"n":"Ahmed Brothers","c":"Rawalpindi","t":"customer"},{"n":"M.A.T. Traders","c":"Rawalpindi","t":"customer"},{"n":"Hamza Traders","c":"Rawalpindi","t":"customer"},{"n":"Talha Pipe & Sanitary Store","c":"Rawalpindi","t":"customer"},{"n":"H.A.T. Traders","c":"Rawalpindi","t":"customer"},{"n":"Khalid Corporation","c":"Rawalpindi","t":"customer"},{"n":"Pak Punjab Sanitary Store","c":"Rawalpindi","t":"customer"},{"n":"H.S. Sanitary Store","c":"Rawalpindi","t":"customer"},{"n":"Abdul Wahab Sanitary Store","c":"Rawalpindi","t":"customer"},{"n":"Khan Corporation","c":"Rawalpindi","t":"customer"},{"n":"Pak Sanitary Store","c":"Rawalpindi","t":"customer"},{"n":"S.A. Corporation","c":"Rawalpindi","t":"customer"},{"n":"Pak Asia Sanitary Store","c":"Rawalpindi","t":"customer"},{"n":"Imran Agency","c":"Rawalpindi","t":"customer"},{"n":"Waqas Rafiq Sanitary Store","c":"Rawalpindi","t":"customer"},{"n":"Atif Sanitary Store","c":"Rawalpindi","t":"customer"},{"n":"Ghulam Nabi & Sons","c":"Rawalpindi","t":"customer"},{"n":"Hamid Corporation","c":"Rawalpindi","t":"customer"},{"n":"Tabish Traders","c":"Rawalpindi","t":"customer"},{"n":"Sajjad Siddiqui Sanitary Store","c":"Peshawar","t":"customer"},{"n":"Akbari Sanitary Store","c":"Peshawar","t":"customer"},{"n":"Al-Harmain Sanitary Store","c":"Peshawar","t":"customer"},{"n":"Zafar Shah Sanitary Store","c":"Peshawar","t":"customer"},{"n":"F.G. Traders","c":"Peshawar","t":"customer"},{"n":"Aurangzeb Corporation","c":"Peshawar","t":"customer"},{"n":"Makkah Sanitary Store","c":"Gujranwala","t":"customer"},{"n":"Munawar Sanitary Store","c":"Gujranwala","t":"customer"},{"n":"Super Sanitary Store","c":"Gujranwala","t":"customer"},{"n":"Opal Sanitary Store","c":"Gujranwala","t":"customer"},{"n":"Khawaja Kamran Sanitary Store","c":"Gujranwala","t":"customer"},{"n":"Gujranwala Sanitary Store","c":"Gujranwala","t":"customer"},{"n":"Meezan Sanitary Store","c":"Gujranwala","t":"customer"},{"n":"H.A. Sanitary Store","c":"Gujranwala","t":"customer"},{"n":"Ittehad Sanitary Store","c":"Gujranwala","t":"customer"},{"n":"Ehsan Sanitary Store","c":"Gujranwala","t":"customer"},{"n":"Awami Sanitary Store","c":"Gujranwala","t":"customer"},{"n":"Mr. Mudassar Hassan","c":"Gujranwala","t":"dealer"},{"n":"Mr. Ehsan Ali","c":"Gujranwala","t":"dealer"},{"n":"Mr. Muhammad Umar","c":"Rawalpindi","t":"dealer"},{"n":"Mr. Amjad Ali","c":"Mansehra","t":"dealer"},{"n":"Mr. Khalid Mughal","c":"Gujranwala","t":"dealer"},{"n":"Mr. Malik Imran","c":"Gujranwala","t":"dealer"}];
+var lines=[],nextNo=95,$=function(i){return document.getElementById(i)};
+var fmt=function(n){return Number(n).toLocaleString("en-US",{maximumFractionDigits:2})};
+var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
+var N=function(v){return Number(v)||0};
+function pr(l){return D[l.p].g[l.g].r[l.s]}
+function dAmt(l){return Math.round(N(l.d)*N(pr(l)[0])*100)/100}
+function pAmt(l){return Math.round(N(l.c)*N(pr(l)[1])*100)/100}
+function amount(l){return dAmt(l)+pAmt(l)}
+function used(l){return N(l.d)>0||N(l.c)>0}
+function desc(l){return D[l.p].n+" "+l.s+" ("+D[l.p].g[l.g].n+")"}
+function mk(){var l={p:0,g:0,s:"",d:"",c:""};l.s=Object.keys(D[0].g[0].r)[0];return l}
+function opt(a,s){return a.map(function(v,i){return '<option value="'+i+'"'+(i==s?' selected':'')+'>'+esc(v)+'</option>'}).join("")}
+function sub(l){return "Dozen "+fmt(dAmt(l))+" + Pcs "+fmt(pAmt(l))}
+function pshow(v){return v==null?"Not set":fmt(v)}
+/* ---------- customer selection ---------- */
+function mode(){return document.querySelector('input[name=cm]:checked').value}
+function cities(){var s={};C.forEach(function(c){s[c.c]=1});return Object.keys(s).sort()}
+function fillCities(sel,id,all){$(id).innerHTML=(all?'<option value="">All cities</option>':'')+cities().map(function(c){return '<option'+(c==sel?' selected':'')+'>'+esc(c)+'</option>'}).join("");$("dl").innerHTML=cities().map(function(c){return '<option value="'+esc(c)+'">'}).join("")}
+function fillCust(){
+ var city=$("fc").value,cur=$("cust").value;
+ var list=C.filter(function(c){return !city||c.c==city}).sort(function(a,b){return a.n.localeCompare(b.n)});
+ $("cust").innerHTML='<option value="">Select customer</option>'+list.map(function(c){var k=c.n+"|"+c.c;return '<option value="'+esc(k)+'"'+(k==cur?' selected':'')+'>'+esc(c.n)+(city?'':' ('+esc(c.c)+')')+'</option>'}).join("");
+}
+function cust(){
+ if(mode()=="new")return{n:$("nn").value.trim(),c:$("nc").value.trim()};
+ var v=$("cust").value;if(!v)return{n:"",c:""};var i=v.lastIndexOf("|");return{n:v.slice(0,i),c:v.slice(i+1)};
+}
+function setMode(m){
+ document.querySelector('input[name=cm][value='+m+']').checked=true;
+ $("cOld").style.display=m=="old"?"":"none";$("cNew").style.display=m=="new"?"":"none";preview();
+}
+document.querySelectorAll('input[name=cm]').forEach(function(r){r.onchange=function(){$("cmsg").textContent="";setMode(mode())}});
+$("fc").onchange=function(){fillCust();preview()};
+$("cust").onchange=preview;$("nn").oninput=preview;$("nc").oninput=preview;
+$("savec").onclick=function(){
+ var n=$("nn").value.trim(),c=$("nc").value.trim(),m=$("cmsg");
+ if(n.length<2||!c){m.className="err";m.textContent="Please type customer name and city.";return}
+ var ex=C.filter(function(x){return x.n.toLowerCase()==n.toLowerCase()&&x.c.toLowerCase()==c.toLowerCase()})[0];
+ var isNew=!ex;if(isNew){ex={n:n,c:c,t:"customer"};C.push(ex)}
+ m.className="ok";m.textContent=isNew?"Customer saved in Customers list.":"This customer already exists. Selected from list.";
+ fillCities(ex.c,"fc",true);fillCust();$("cust").value=ex.n+"|"+ex.c;$("nn").value="";$("nc").value="";setMode("old");
+};
+/* ---------- invoice lines ---------- */
+function renderLines(){
+ $("lines").innerHTML=lines.map(function(l,i){
+  var sz=Object.keys(D[l.p].g[l.g].r),p=pr(l);
+  return '<div class="line" data-i="'+i+'"><div class="row">'+
+   '<div class="full"><label>Product</label><select data-f="p">'+opt(D.map(function(x){return x.n}),l.p)+'</select></div>'+
+   '<div><label>Quality</label><select data-f="g">'+opt(D[l.p].g.map(function(x){return x.n}),l.g)+'</select></div>'+
+   '<div><label>Size</label><select data-f="s">'+opt(sz,sz.indexOf(l.s))+'</select></div>'+
+   '<div><label>Price of 1 Dozen</label><div class="pr">'+pshow(p[0])+'</div></div>'+
+   '<div><label>Price of 1 Piece</label><div class="pr">'+pshow(p[1])+'</div></div>'+
+   '<div><label>How many Dozen</label><input data-f="d" type="number" min="0" step="1" value="'+l.d+'"></div>'+
+   '<div><label>How many Pcs</label><input data-f="c" type="number" min="0" step="1" value="'+l.c+'"></div>'+
+   '</div><div class="lf"><div>Amount: <span class="amt" id="a'+i+'">'+fmt(amount(l))+'</span><div class="sub" id="s'+i+'">'+sub(l)+'</div></div><button class="del" type="button" data-del="1">Remove</button></div></div>'}).join("");
+}
+function qtyText(l){var t=[];if(N(l.d))t.push(fmt(l.d)+" Dozen");if(N(l.c))t.push(fmt(l.c)+" Pcs");return t.join(" + ")}
+function priceText(l){var t=[],p=pr(l);if(N(l.d))t.push(fmt(p[0])+" / Dozen");if(N(l.c))t.push(fmt(p[1])+" / Pc");return t.join("<br>")}
+function preview(){
+ var rows="",n=0,t=0,c=cust();
+ lines.forEach(function(l){
+  if(!used(l))return;n++;var a=amount(l);t+=a;
+  rows+='<tr><td>'+n+'</td><td>'+esc(desc(l))+'</td><td class="r">'+qtyText(l)+'</td><td class="r">'+priceText(l)+'</td><td class="r">'+fmt(a)+'</td></tr>';
+ });
+ for(var k=n;k<6;k++)rows+='<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td></tr>';
+ $("pb").innerHTML=rows;$("pt").textContent=fmt(t);
+ $("pc").textContent=c.n||"-";$("py").textContent=c.c||"-";$("pn").textContent=$("no").value;$("pd").textContent=$("dt").value;
+}
+$("lines").addEventListener("change",function(e){
+ var f=e.target.dataset.f;if(!f)return;var l=lines[e.target.closest(".line").dataset.i],v=+e.target.value;
+ if(f=="p"){l.p=v;l.g=0;l.s=Object.keys(D[v].g[0].r)[0];renderLines()}
+ else if(f=="g"){l.g=v;l.s=Object.keys(D[l.p].g[v].r)[0];renderLines()}
+ else if(f=="s"){l.s=Object.keys(D[l.p].g[l.g].r)[v];renderLines()}
+ preview();
+});
+$("lines").addEventListener("input",function(e){
+ var f=e.target.dataset.f;if(f!="d"&&f!="c")return;
+ var i=e.target.closest(".line").dataset.i,l=lines[i];l[f]=e.target.value;
+ $("a"+i).textContent=fmt(amount(l));$("s"+i).textContent=sub(l);preview();
+});
+$("lines").addEventListener("click",function(e){
+ if(!e.target.dataset.del)return;lines.splice(+e.target.closest(".line").dataset.i,1);
+ if(!lines.length)lines.push(mk());renderLines();preview();
+});
+$("add").onclick=function(){lines.push(mk());renderLines();preview()};
+$("print").onclick=function(){
+ var e=$("err"),c=cust();
+ if(mode()=="old"&&!c.n){e.textContent="Please select a customer first.";return}
+ if(mode()=="new"&&(c.n.length<2||!c.c)){e.textContent="Please type customer name and city.";return}
+ var any=lines.filter(used);
+ if(!any.length){e.textContent="Please enter Dozen or Pcs for at least one item.";return}
+ for(var i=0;i<any.length;i++){var l=any[i],p=pr(l);
+  if(N(l.d)>0&&!(N(p[0])>0)){e.textContent="Price of dozen is not set for "+desc(l)+". Ask admin to set it in Products.";return}
+  if(N(l.c)>0&&!(N(p[1])>0)){e.textContent="Price of piece is not set for "+desc(l)+". Ask admin to set it in Products.";return}}
+ e.textContent="";preview();window.print();
+};
+function reset(){
+ lines=[mk()];$("no").value=nextNo;
+ var t=new Date(),p=function(n){return String(n).padStart(2,"0")};
+ $("dt").value=p(t.getDate())+"-"+p(t.getMonth()+1)+"-"+t.getFullYear();
+ $("nn").value="";$("nc").value="";$("cmsg").textContent="";$("err").textContent="";
+ fillCities("","fc",true);fillCust();$("cust").value="";setMode("old");renderLines();preview();
+}
+$("new").onclick=function(){nextNo++;reset()};
+/* ---------- products and prices (admin) ---------- */
+$("fp").innerHTML=opt(D.map(function(x){return x.n}),0);
+function renderPrices(){
+ var pi=+$("fp").value,h="";
+ D[pi].g.forEach(function(g,gi){Object.keys(g.r).forEach(function(s){
+  h+='<tr><td>'+esc(g.n)+'</td><td>'+esc(s)+'</td>'+
+  '<td><input type="number" min="0" step="any" data-g="'+gi+'" data-s="'+esc(s)+'" data-k="0" value="'+(g.r[s][0]==null?"":g.r[s][0])+'"></td>'+
+  '<td><input type="number" min="0" step="any" data-g="'+gi+'" data-s="'+esc(s)+'" data-k="1" value="'+(g.r[s][1]==null?"":g.r[s][1])+'"></td></tr>'})});
+ $("pt2").innerHTML=h;
+}
+$("fp").onchange=function(){renderPrices();$("ok").textContent=""};
+$("pt2").addEventListener("input",function(e){
+ var d=e.target.dataset,pi=+$("fp").value;if(d.k===undefined)return;
+ D[pi].g[+d.g].r[d.s][+d.k]=e.target.value===""?null:Number(e.target.value);
+ $("ok").textContent="Price updated. New invoices will use this price.";
+});
+/* ---------- customers (CRUD demo) ---------- */
+function renderCT(){
+ var cur=$("ctf").value;fillCities(cur,"ctf",true);cur=$("ctf").value;
+ var list=C.map(function(c,i){return{c:c,i:i}}).filter(function(x){return !cur||x.c.c==cur});
+ $("ccount").textContent=list.length+" customers";
+ $("ctb").innerHTML=list.map(function(x){return '<tr data-i="'+x.i+'"><td><input data-k="n" value="'+esc(x.c.n)+'"></td><td><input data-k="c" list="dl" value="'+esc(x.c.c)+'"></td>'+
+  '<td><select data-k="t"><option value="customer"'+(x.c.t=="customer"?" selected":"")+'>Customer</option><option value="dealer"'+(x.c.t=="dealer"?" selected":"")+'>Dealer</option></select></td>'+
+  '<td><button class="del" type="button" data-del="1">Delete</button></td></tr>'}).join("");
+}
+$("ctf").onchange=renderCT;
+$("ctb").addEventListener("change",function(e){var k=e.target.dataset.k;if(!k)return;C[e.target.closest("tr").dataset.i][k]=e.target.value.trim();renderCT()});
+$("ctb").addEventListener("click",function(e){if(!e.target.dataset.del)return;C.splice(+e.target.closest("tr").dataset.i,1);renderCT()});
+$("addc").onclick=function(){
+ var n=$("an").value.trim(),c=$("ac").value.trim(),m=$("cerr");
+ if(n.length<2||!c){m.textContent="Please type customer name and city.";return}
+ if(C.some(function(x){return x.n.toLowerCase()==n.toLowerCase()&&x.c.toLowerCase()==c.toLowerCase()})){m.textContent="This customer already exists in "+c+".";return}
+ C.push({n:n,c:c,t:$("at").value});m.textContent="";$("an").value="";$("ac").value="";renderCT();
+};
+function show(n){
+ ["v1","v2","v3"].forEach(function(v,i){$(v).style.display=i+1==n?"":"none";$("t"+(i+1)).className="sec"+(i+1==n?" on":"")});
+ $("paper").style.display=n==1?"":"none";
+ if(n==1){fillCities($("fc").value,"fc",true);fillCust();renderLines();preview()}else if(n==2)renderPrices();else renderCT();
+}
+$("t1").onclick=function(){show(1)};$("t2").onclick=function(){show(2)};$("t3").onclick=function(){show(3)};
+reset();
+</script>
+</body>
+</html>
