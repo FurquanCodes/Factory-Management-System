@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import Link from 'next/link'
 import Greeting from '@/app/components/Greeting'
+import DeletePaymentButton from '@/app/(app)/payments/DeletePaymentButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -210,7 +211,10 @@ export default async function DashboardPage() {
                       <p className="font-bold text-slate-800 text-sm">{customerName}</p>
                       <p className="text-xs text-slate-400 font-medium mt-0.5">{displayDate} · {method}</p>
                     </div>
-                    <p className="font-black text-sm text-emerald-600">+ Rs {Number(pay.amount).toLocaleString()}</p>
+                    <div className="flex items-center">
+                      <p className="font-black text-sm text-emerald-600">+ Rs {Number(pay.amount).toLocaleString()}</p>
+                      <DeletePaymentButton paymentId={pay.id} />
+                    </div>
                   </div>
                 )
               })}

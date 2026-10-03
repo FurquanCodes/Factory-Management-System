@@ -35,3 +35,27 @@ export async function savePaymentAction(payload: any) {
   
   return { success: true };
 }
+
+export async function deletePaymentAction(paymentId: string) {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  const { data: orgs } = await supabase.from('organizations').select('id').limit(1);
+  if (!orgs || orgs.length === 0) throw new Error('No organization found');
+  const orgId = orgs[0].id;
+
+  const { error } = await supabase
+    .from('party_payments')
+    .delete()
+    .eq('id', paymentId)
+    .eq('organization_id', orgId);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath('/dashboard');
+  revalidatePath('/outstanding');
+  
+  return { success: true };
+}
