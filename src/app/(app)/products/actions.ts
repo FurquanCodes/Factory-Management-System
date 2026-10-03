@@ -39,12 +39,24 @@ export async function setRatesAction(payload: any[]) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
   
+  const { data: orgs } = await supabase.from('organizations').select('id').limit(1)
+  const orgId = orgs![0].id
+
   // payload = [{ variant_id: "...", rate: 100, rate_unit: "dozen" }]
-  const { data, error } = await supabase.rpc('set_rates', { p_rows: payload })
-  if (error) throw new Error(error.message)
+  const rowsToInsert = payload.map(p => ({
+    organization_id: orgId,
+    variant_id: p.variant_id,
+    rate: p.rate,
+    rate_unit: p.rate_unit
+  }))
+
+  if (rowsToInsert.length > 0) {
+    const { error } = await supabase.from('rates').insert(rowsToInsert)
+    if (error) throw new Error(error.message)
+  }
   
   revalidatePath('/products')
-  return { success: true, updated: data }
+  return { success: true }
 }
 
 export async function addQualityAction(productId: string, name: string) {
