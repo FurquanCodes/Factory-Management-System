@@ -16,7 +16,7 @@ export default function InvoiceForm({ customers, inventory, nextInvoiceNo }: { c
   const [saveNewCustomer, setSaveNewCustomer] = useState<boolean>(false);
   const [dateStr, setDateStr] = useState<string>('');
   
-  const [paymentStatus, setPaymentStatus] = useState<'due' | 'paid'>('due');
+  const [paymentStatus, setPaymentStatus] = useState<'due' | 'paid' | ''>('');
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'bank' | 'other'>('cash');
 
   // Initialize with a static ID for SSR, then generate a UUID on client side
@@ -100,6 +100,10 @@ export default function InvoiceForm({ customers, inventory, nextInvoiceNo }: { c
     }
     if (!selectedCustomer && (!walkinName || !walkinCity)) {
       alert("Please select a customer or type a new customer name and city.");
+      return;
+    }
+    if (!paymentStatus) {
+      alert("Please select a Payment Status (Due or Paid).");
       return;
     }
 
