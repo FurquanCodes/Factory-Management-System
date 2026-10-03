@@ -46,7 +46,7 @@ export default async function DashboardPage() {
     <div className="w-full min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
       
       {/* Hero Greeting Section */}
-      <div className="bg-gradient-to-r from-blue-700 via-blue-800 to-indigo-900 text-white">
+      <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <Greeting />
