@@ -5,6 +5,7 @@ import PrintButton from '@/app/(app)/outstanding/PrintButton'
 import BackButton from '@/app/components/BackButton'
 import DeleteInvoiceButton from '@/app/(app)/invoices/DeleteInvoiceButton'
 import DeletePaymentButton from '@/app/(app)/payments/DeletePaymentButton'
+import DeleteCustomerButton from '@/app/(app)/customers/DeleteCustomerButton'
 import { notFound } from 'next/navigation'
 
 // We force dynamic because this is an individual customer page
@@ -82,6 +83,7 @@ export default async function CustomerLedgerPage({
           </div>
           
           <div className="flex gap-4">
+            <DeleteCustomerButton customerId={customer.id} customerName={customer.name} />
             <Link 
               href={`/payments/new?partyId=${customer.id}&amount=${currentDue}`}
               className="px-6 py-3 bg-emerald-600 text-white font-bold text-lg rounded-lg shadow-sm hover:bg-emerald-700 transition-colors"

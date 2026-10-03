@@ -46,3 +46,27 @@ export async function addCustomerAction(formData: FormData) {
   
   return { id: data.id }
 }
+
+export async function deleteCustomerAction(customerId: string) {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  const { data: orgs } = await supabase.from('organizations').select('id').limit(1);
+  if (!orgs || orgs.length === 0) throw new Error('No organization found');
+  const orgId = orgs[0].id;
+
+  const { error } = await supabase
+    .from('parties')
+    .update({ deleted_at: new Date().toISOString() })
+    .eq('id', customerId)
+    .eq('organization_id', orgId);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath('/customers');
+  revalidatePath('/outstanding');
+  
+  return { success: true };
+}
