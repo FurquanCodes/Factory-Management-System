@@ -52,10 +52,7 @@ export default async function InvoiceViewPage({ params }: { params: Promise<{ id
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-8 text-center text-slate-600">
-          <p className="mb-4">This is a view-only preview of the invoice.</p>
-          <p>Scroll down or click Print to view the A4 format.</p>
-        </div>
+
       </div>
 
       {/* ----------------- EXACT A4 PRINT PAPER ----------------- */}
