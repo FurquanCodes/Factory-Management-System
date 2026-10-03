@@ -147,8 +147,8 @@ export default function InvoiceForm({ customers, inventory, nextInvoiceNo }: { c
   
   // Get customer info for preview
   const custObj = customers.find(c => c.id === selectedCustomer);
-  const custName = custObj ? custObj.name : '-';
-  const custCity = custObj ? custObj.city : '-';
+  const custName = customerMode === 'old' && custObj ? custObj.name : (customerMode === 'new' && walkinName ? walkinName : '-');
+  const custCity = customerMode === 'old' && custObj ? custObj.city : (customerMode === 'new' && walkinCity ? walkinCity : '-');
 
   return (
     <div className="w-full mx-auto pb-32">
