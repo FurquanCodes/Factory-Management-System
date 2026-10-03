@@ -4,6 +4,7 @@ import '@/app/print.css' // Reuse A4 print styling
 import PrintButton from '@/app/(app)/outstanding/PrintButton'
 import BackButton from '@/app/components/BackButton'
 import DeleteInvoiceButton from '@/app/(app)/invoices/DeleteInvoiceButton'
+import DeletePaymentButton from '@/app/(app)/payments/DeletePaymentButton'
 import { notFound } from 'next/navigation'
 
 // We force dynamic because this is an individual customer page
@@ -138,6 +139,11 @@ export default async function CustomerLedgerPage({
                         {row.details}
                         {row.kind === 'invoice' && row.ref_id && (
                           <span className="ml-2 text-xs bg-slate-200 text-slate-600 px-2 py-1 rounded">View</span>
+                        )}
+                        {row.kind === 'payment' && row.ref_id && (
+                          <span className="ml-2 inline-flex items-center">
+                            <DeletePaymentButton paymentId={row.ref_id} />
+                          </span>
                         )}
                       </td>
                       <td className="p-4 text-right font-medium text-red-500">
