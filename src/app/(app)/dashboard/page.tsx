@@ -22,13 +22,13 @@ export default async function DashboardPage() {
     { data: todayInvoices },
     { data: topDebtors },
   ] = await Promise.all([
-    supabase.from('invoices').select('*', { count: 'exact', head: true }),
+    supabase.from('invoices').select('*', { count: 'exact', head: true }).neq('status', 'cancelled'),
     supabase.from('parties').select('*', { count: 'exact', head: true }).is('deleted_at', null),
     supabase.from('products').select('*', { count: 'exact', head: true }).is('deleted_at', null),
     supabase.from('v_party_outstanding').select('due_amount'),
-    supabase.from('invoices').select('*, parties(name)').order('created_at', { ascending: false }).limit(5),
+    supabase.from('invoices').select('*, parties(name)').neq('status', 'cancelled').order('created_at', { ascending: false }).limit(5),
     supabase.from('party_payments').select('*, parties(name)').is('deleted_at', null).order('created_at', { ascending: false }).limit(5),
-    supabase.from('invoices').select('total_amount').eq('invoice_date', new Date().toISOString().split('T')[0]),
+    supabase.from('invoices').select('total_amount').eq('invoice_date', new Date().toISOString().split('T')[0]).neq('status', 'cancelled'),
     supabase.from('v_party_outstanding').select('party_id, due_amount, ...parties(name)').gt('due_amount', 0).order('due_amount', { ascending: false }).limit(5),
   ])
 
