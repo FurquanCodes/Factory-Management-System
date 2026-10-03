@@ -131,14 +131,15 @@ export default async function DashboardPage() {
         </div>
 
         {/* Quick Access Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
           {[
             { href: '/invoices/new', label: 'New Invoice', icon: '📝', color: 'from-blue-500 to-blue-600' },
             { href: '/invoices', label: 'Invoice History', icon: '📋', color: 'from-slate-500 to-slate-600' },
             { href: '/customers', label: 'Customers', icon: '👥', color: 'from-purple-500 to-purple-600' },
             { href: '/products', label: 'Products', icon: '📦', color: 'from-emerald-500 to-emerald-600' },
             { href: '/outstanding', label: 'Outstanding', icon: '💰', color: 'from-amber-500 to-amber-600' },
-            { href: '/payments/new', label: 'Record Payment', icon: '💵', color: 'from-teal-500 to-teal-600' },
+            { href: '/payments/new', label: 'Payment', icon: '💵', color: 'from-teal-500 to-teal-600' },
+            { href: '/recycle-bin', label: 'Recycle Bin', icon: '🗑️', color: 'from-red-500 to-red-600' },
           ].map((item) => (
             <Link 
               key={item.href} 
