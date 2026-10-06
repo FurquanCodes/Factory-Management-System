@@ -62,11 +62,11 @@ export default function ProductList({ productList }: { productList: any[] }) {
           >
             {/* Clickable Product Header */}
             <div 
-              className={`flex justify-between items-center px-8 py-5 cursor-pointer select-none transition-colors ${isExpanded ? 'bg-blue-50/50' : 'bg-white'}`}
+              className={`flex flex-col sm:flex-row justify-between items-start sm:items-center px-4 sm:px-8 py-4 sm:py-5 cursor-pointer select-none transition-colors gap-4 sm:gap-0 ${isExpanded ? 'bg-blue-50/50' : 'bg-white'}`}
               onClick={() => toggleExpand(product.id)}
             >
-              <div className="flex items-center">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-5 transition-colors ${isExpanded ? 'bg-blue-600' : 'bg-slate-100'}`}>
+              <div className="flex items-center w-full sm:w-auto">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 sm:mr-5 shrink-0 transition-colors ${isExpanded ? 'bg-blue-600' : 'bg-slate-100'}`}>
                   <svg 
                     className={`w-6 h-6 transition-transform duration-300 ${isExpanded ? 'rotate-90 text-white' : 'text-slate-500'}`} 
                     fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -75,18 +75,18 @@ export default function ProductList({ productList }: { productList: any[] }) {
                   </svg>
                 </div>
                 <div>
-                  <h2 className="text-2xl font-extrabold text-slate-800">{product.name}</h2>
-                  <p className="text-base text-slate-500 font-medium mt-0.5">
+                  <h2 className="text-xl sm:text-2xl font-extrabold text-slate-800">{product.name}</h2>
+                  <p className="text-sm sm:text-base text-slate-500 font-medium mt-0.5">
                     {product.grades?.length || 0} Qualities &nbsp;•&nbsp; {product.sizes?.length || 0} Sizes
                   </p>
                 </div>
               </div>
               
-              <div className="flex gap-2">
+              <div className="flex gap-2 w-full sm:w-auto">
                 <Link 
                   href={`/products/${product.id}`}
                   onClick={(e) => e.stopPropagation()}
-                  className="px-5 py-2.5 text-base font-bold bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 hover:text-black rounded-lg shadow-sm transition-all cursor-pointer inline-block"
+                  className="w-full sm:w-auto text-center px-5 py-2.5 text-base font-bold bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 hover:text-black rounded-lg shadow-sm transition-all cursor-pointer inline-block"
                 >
                   Edit Product
                 </Link>
@@ -102,14 +102,14 @@ export default function ProductList({ productList }: { productList: any[] }) {
                     <div key={qualityName} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                       
                       {/* Quality Heading */}
-                      <div className="flex justify-between items-center border-b border-slate-100 pb-4 mb-6">
+                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-4 mb-6 gap-3 sm:gap-0">
                         <h3 className="text-xl font-bold text-slate-800 flex items-center">
                           <span className="w-3 h-3 rounded-full bg-blue-500 mr-3"></span>
                           Quality: {qualityName}
                         </h3>
                         <button 
                           onClick={() => router.push(`/products/${product.id}`)}
-                          className="px-4 py-2 text-sm font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg border border-blue-200 transition-colors"
+                          className="w-full sm:w-auto px-4 py-2 text-sm font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg border border-blue-200 transition-colors"
                         >
                           Update Prices
                         </button>

@@ -431,18 +431,18 @@ export default function InvoiceForm({ customers, inventory, nextInvoiceNo }: { c
           )}
         </div>
         
-        <div className="flex justify-between items-center mb-10 border-t border-slate-200 pt-6">
+        <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-4 mb-10 border-t border-slate-200 pt-6">
           <button 
             onClick={() => handleSave(false)} 
             disabled={isPending}
-            className="px-8 py-3 bg-white border border-slate-300 text-slate-700 font-bold text-xl rounded-lg shadow-sm hover:bg-slate-50 disabled:opacity-50"
+            className="w-full sm:w-auto px-8 py-3 bg-white border border-slate-300 text-slate-700 font-bold text-xl rounded-lg shadow-sm hover:bg-slate-50 disabled:opacity-50"
           >
             {isPending ? 'Saving...' : 'Save as Draft'}
           </button>
           <button 
             onClick={() => handleSave(true)} 
             disabled={isPending}
-            className="px-8 py-3 bg-green-700 text-white font-bold text-xl rounded-lg shadow-lg flex items-center justify-center transition-transform hover:scale-105 hover:bg-green-800 disabled:opacity-50 disabled:scale-100"
+            className="w-full sm:w-auto px-8 py-3 bg-green-700 text-white font-bold text-xl rounded-lg shadow-lg flex items-center justify-center transition-transform hover:scale-105 hover:bg-green-800 disabled:opacity-50 disabled:scale-100"
           >
             {isPending ? 'Processing...' : 'Save & Print Invoice'}
           </button>

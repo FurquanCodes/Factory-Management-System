@@ -20,20 +20,20 @@ export default async function InvoiceHistoryPage() {
   }
 
   return (
-    <div className="w-full min-h-screen bg-slate-50 p-8">
+    <div className="w-full min-h-screen bg-slate-50 p-4 sm:p-8">
       <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-6 sm:mb-8">
           <div>
-            <h1 className="text-3xl font-black text-slate-800">Invoice History</h1>
-            <p className="text-lg text-slate-500 mt-1 font-medium">View and manage all your past invoices.</p>
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-800">Invoice History</h1>
+            <p className="text-sm sm:text-lg text-slate-500 mt-1 font-medium">View and manage all your past invoices.</p>
           </div>
-          <Link href="/invoices/new" className="px-6 py-3 bg-blue-700 text-white font-bold text-lg rounded-lg shadow-sm hover:bg-blue-800 transition-colors">
+          <Link href="/invoices/new" className="w-full sm:w-auto text-center px-6 py-3 bg-blue-700 text-white font-bold text-lg rounded-lg shadow-sm hover:bg-blue-800 transition-colors">
             + Create New Invoice
           </Link>
         </div>
 
-        <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
-          <table className="w-full text-left border-collapse">
+        <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-x-auto">
+          <table className="w-full text-left border-collapse min-w-[800px]">
             <thead>
               <tr className="bg-slate-100 border-b border-slate-200 text-slate-600">
                 <th className="p-4 font-bold">Invoice #</th>

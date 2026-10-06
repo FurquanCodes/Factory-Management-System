@@ -50,21 +50,21 @@ export default async function OutstandingPage() {
     <div className="w-full min-h-screen bg-slate-50 p-8 pt-8">
       
       {/* ----------------- WEB APP UI (Hidden when printing) ----------------- */}
-      <div className="noprint max-w-4xl mx-auto mb-8 flex justify-between items-end">
+      <div className="noprint max-w-4xl mx-auto mb-6 sm:mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 sm:gap-0">
         <div>
-          <h1 className="text-3xl font-black text-slate-800">Outstanding Balances</h1>
-          <p className="text-lg text-slate-500 mt-1 font-medium">Master list of all customers with due amounts.</p>
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-800">Outstanding Balances</h1>
+          <p className="text-sm sm:text-lg text-slate-500 mt-1 font-medium">Master list of all customers with due amounts.</p>
         </div>
-        <div className="flex gap-4">
-          <Link href="/payments/new" className="px-6 py-3 bg-emerald-600 text-white font-bold text-lg rounded-lg shadow-sm hover:bg-emerald-700 transition-colors">
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          <Link href="/payments/new" className="w-full sm:w-auto text-center px-6 py-3 bg-emerald-600 text-white font-bold text-lg rounded-lg shadow-sm hover:bg-emerald-700 transition-colors">
             + Record Payment
           </Link>
           <PrintButton />
         </div>
       </div>
 
-      <div className="noprint max-w-4xl mx-auto bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
-        <table className="w-full text-left border-collapse">
+      <div className="noprint max-w-4xl mx-auto bg-white rounded-lg border border-slate-200 shadow-sm overflow-x-auto">
+        <table className="w-full text-left border-collapse min-w-[600px]">
           <thead>
             <tr className="bg-slate-100 border-b border-slate-200 text-slate-600">
               <th className="p-4 font-bold w-16 text-center">Sr #</th>
