@@ -82,13 +82,17 @@ export async function saveInvoiceAction(payload: any) {
     variant_id: item.variantId,
     description: `${item.productName} ${item.sizeName} (${item.qualityName})`,
     quantity: item.qty,
-    unit: item.unit,
+    unit: item.unit ? item.unit.toLowerCase() : 'piece',
     rate: item.rate,
     amount: item.amount
   }));
 
   const { error: itemsError } = await supabase.from('invoice_items').insert(itemsToInsert);
-  if (itemsError) throw new Error(itemsError.message);
+  if (itemsError) {
+    // If items fail, clean up the orphaned invoice
+    await supabase.from('invoices').delete().eq('id', invoiceId);
+    throw new Error(itemsError.message);
+  }
 
   // 6. Record Payment if paid
   if (payload.isFinal && payload.paymentStatus === 'paid') {
