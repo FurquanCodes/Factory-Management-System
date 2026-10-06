@@ -5,28 +5,71 @@ import { useRouter } from 'next/navigation';
 import '@/app/print.css';
 import { saveInvoiceAction } from '../actions';
 
-export default function InvoiceForm({ customers, inventory, nextInvoiceNo }: { customers: any[], inventory: any[], nextInvoiceNo: number }) {
+export default function InvoiceForm({ customers, inventory, nextInvoiceNo, initialData }: { customers: any[], inventory: any[], nextInvoiceNo: number, initialData?: any }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [customerMode, setCustomerMode] = useState<'old' | 'new'>('old');
+  const [customerMode, setCustomerMode] = useState<'old' | 'new'>(initialData?.party_id ? 'old' : (initialData?.party_name_snapshot && !initialData?.party_id ? 'new' : 'old'));
   const [filterCity, setFilterCity] = useState<string>('');
-  const [selectedCustomer, setSelectedCustomer] = useState<string>('');
-  const [walkinName, setWalkinName] = useState<string>('');
-  const [walkinCity, setWalkinCity] = useState<string>('');
+  const [selectedCustomer, setSelectedCustomer] = useState<string>(initialData?.party_id || '');
+  const [walkinName, setWalkinName] = useState<string>(!initialData?.party_id ? initialData?.party_name_snapshot || '' : '');
+  const [walkinCity, setWalkinCity] = useState<string>(!initialData?.party_id ? initialData?.party_city_snapshot || '' : '');
   const [saveNewCustomer, setSaveNewCustomer] = useState<boolean>(false);
   const [dateStr, setDateStr] = useState<string>('');
   
   const [paymentStatus, setPaymentStatus] = useState<'due' | 'paid' | ''>('');
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'bank' | 'other'>('cash');
 
-  // Initialize with a static ID for SSR, then generate a UUID on client side
-  const [items, setItems] = useState<any[]>([{ id: 'default-ssr-id', productId: '', qualityId: '', sizeId: '', variantId: '', qty: 1, rate: 0, unit: '', amount: 0, productName: '', qualityName: '', sizeName: '' }]);
+  const getInitialItems = () => {
+    if (initialData?.items && initialData.items.length > 0) {
+      return initialData.items.map((item: any) => {
+        let pId = '', qId = '', sId = '', pName = '', qName = '', sName = '', bRate = 0, bUnit = item.unit || '';
+        for (const p of inventory) {
+          const v = p.variants?.find((v: any) => v.id === item.variant_id);
+          if (v) {
+            pId = p.id;
+            pName = p.name;
+            qId = v.grade_id;
+            qName = v.grade?.name || '';
+            sId = v.size_id;
+            sName = v.size?.label || '';
+            bRate = v.rate?.rate || 0;
+            break;
+          }
+        }
+        return {
+          id: item.id || 'default-ssr-id',
+          productId: pId,
+          productName: pName,
+          qualityId: qId,
+          qualityName: qName,
+          sizeId: sId,
+          sizeName: sName,
+          variantId: item.variant_id,
+          qty: item.quantity,
+          unit: item.unit ? item.unit.charAt(0).toUpperCase() + item.unit.slice(1) : '',
+          rate: item.rate,
+          amount: item.amount,
+          baseRate: bRate,
+          baseUnit: bUnit ? bUnit.charAt(0).toUpperCase() + bUnit.slice(1) : ''
+        };
+      });
+    }
+    return [{ id: 'default-ssr-id', productId: '', qualityId: '', sizeId: '', variantId: '', qty: 1, rate: 0, unit: '', amount: 0, productName: '', qualityName: '', sizeName: '' }];
+  };
+
+  const [items, setItems] = useState<any[]>(getInitialItems());
 
   useEffect(() => {
     // Generate real date and UUID only on the client
     const d = new Date();
     setDateStr(`${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`);
-    setItems([{ id: crypto.randomUUID(), productId: '', qualityId: '', sizeId: '', variantId: '', qty: 1, rate: 0, unit: '', amount: 0, productName: '', qualityName: '', sizeName: '' }]);
+    
+    if (!initialData?.items || initialData.items.length === 0) {
+      setItems([{ id: crypto.randomUUID(), productId: '', qualityId: '', sizeId: '', variantId: '', qty: 1, rate: 0, unit: '', amount: 0, productName: '', qualityName: '', sizeName: '' }]);
+    } else {
+      // Re-assign proper UUIDs to initial items if needed
+      setItems(items.map(item => item.id === 'default-ssr-id' ? { ...item, id: crypto.randomUUID() } : item));
+    }
   }, []);
 
   const addItem = () => setItems([...items, { id: crypto.randomUUID(), productId: '', qualityId: '', sizeId: '', variantId: '', qty: 1, rate: 0, unit: '', amount: 0, productName: '', qualityName: '', sizeName: '' }]);
@@ -135,8 +178,8 @@ export default function InvoiceForm({ customers, inventory, nextInvoiceNo }: { c
       alert("Please select a customer or type a new customer name and city.");
       return;
     }
-    if (!paymentStatus) {
-      alert("Please select a Payment Status (Due or Paid).");
+    if (shouldPrint && !paymentStatus) {
+      alert("Please select a Payment Status (Due or Paid) before finalizing.");
       return;
     }
 
@@ -149,6 +192,7 @@ export default function InvoiceForm({ customers, inventory, nextInvoiceNo }: { c
     startTransition(async () => {
       try {
         const payload = {
+          invoiceId: initialData?.id,
           selectedCustomer,
           walkinName,
           walkinCity,

@@ -48,31 +48,59 @@ export async function saveInvoiceAction(payload: any) {
 
   if (!partyName || !partyCity) throw new Error('Customer Name and City are required');
 
-  // 3. Increment Counter (Simple manual increment for dev)
-  const { data: counter } = await supabase.from('invoice_counters').select('last_no').eq('organization_id', orgId).single();
-  const nextNo = (counter?.last_no || 0) + 1;
-  
-  await supabase.from('invoice_counters').upsert({
-    organization_id: orgId,
-    last_no: nextNo
-  });
+  let invoiceId = payload.invoiceId;
+  let nextNo = 0;
 
-  // 4. Insert Invoice
+  if (!invoiceId) {
+    // 3. Increment Counter (Simple manual increment for dev) ONLY if new
+    const { data: counter } = await supabase.from('invoice_counters').select('last_no').eq('organization_id', orgId).single();
+    nextNo = (counter?.last_no || 0) + 1;
+    
+    await supabase.from('invoice_counters').upsert({
+      organization_id: orgId,
+      last_no: nextNo
+    });
+  }
+
+  // 4. Insert or Update Invoice
   const initialStatus = payload.isFinal ? 'final' : 'draft';
-  const { data: invData, error: invError } = await supabase.from('invoices').insert({
-    organization_id: orgId,
-    invoice_no: nextNo,
-    party_id: partyId,
-    party_name_snapshot: partyName,
-    party_city_snapshot: partyCity,
-    invoice_date: new Date().toISOString().split('T')[0],
-    total_amount: payload.totalAmount,
-    status: initialStatus,
-    finalized_at: payload.isFinal ? new Date().toISOString() : null
-  }).select('id').single();
+  
+  if (invoiceId) {
+    // Update existing draft
+    const { data: currentInv } = await supabase.from('invoices').select('status').eq('id', invoiceId).single();
+    if (currentInv?.status !== 'draft') throw new Error("Only draft invoices can be edited");
 
-  if (invError) throw new Error(invError.message);
-  const invoiceId = invData.id;
+    const { error: invError } = await supabase.from('invoices').update({
+      party_id: partyId,
+      party_name_snapshot: partyName,
+      party_city_snapshot: partyCity,
+      total_amount: payload.totalAmount,
+      status: initialStatus,
+      finalized_at: payload.isFinal ? new Date().toISOString() : null,
+      updated_at: new Date().toISOString()
+    }).eq('id', invoiceId);
+
+    if (invError) throw new Error(invError.message);
+
+    // Delete existing items so we can re-insert them cleanly
+    await supabase.from('invoice_items').delete().eq('invoice_id', invoiceId);
+  } else {
+    // Insert new invoice
+    const { data: invData, error: invError } = await supabase.from('invoices').insert({
+      organization_id: orgId,
+      invoice_no: nextNo,
+      party_id: partyId,
+      party_name_snapshot: partyName,
+      party_city_snapshot: partyCity,
+      invoice_date: new Date().toISOString().split('T')[0],
+      total_amount: payload.totalAmount,
+      status: initialStatus,
+      finalized_at: payload.isFinal ? new Date().toISOString() : null
+    }).select('id').single();
+
+    if (invError) throw new Error(invError.message);
+    invoiceId = invData.id;
+  }
 
   // 5. Insert Items
   const itemsToInsert = payload.items.map((item: any, idx: number) => ({
@@ -89,8 +117,10 @@ export async function saveInvoiceAction(payload: any) {
 
   const { error: itemsError } = await supabase.from('invoice_items').insert(itemsToInsert);
   if (itemsError) {
-    // If items fail, clean up the orphaned invoice
-    await supabase.from('invoices').delete().eq('id', invoiceId);
+    if (!payload.invoiceId) {
+      // Only delete the invoice if it was a newly created one
+      await supabase.from('invoices').delete().eq('id', invoiceId);
+    }
     throw new Error(itemsError.message);
   }
 

@@ -83,6 +83,11 @@ export default async function InvoiceHistoryPage() {
                       {inv.status === 'draft' && <span className="text-slate-400 text-sm font-bold">-</span>}
                     </td>
                     <td className="p-4 text-center flex justify-center gap-2">
+                      {inv.status === 'draft' && (
+                        <Link href={`/invoices/${inv.id}/edit`} className="text-amber-600 hover:text-amber-800 font-bold px-3 py-1 bg-amber-50 hover:bg-amber-100 rounded transition-colors inline-block">
+                          Edit
+                        </Link>
+                      )}
                       <Link href={`/invoices/${inv.id}`} className="text-blue-600 hover:text-blue-800 font-bold px-3 py-1 bg-blue-50 hover:bg-blue-100 rounded transition-colors inline-block">
                         View
                       </Link>
