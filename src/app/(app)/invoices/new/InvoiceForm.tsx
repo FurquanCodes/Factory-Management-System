@@ -300,7 +300,19 @@ export default function InvoiceForm({ customers, inventory, nextInvoiceNo }: { c
               // Get the selected product to populate dependent dropdowns
               const selProduct = inventory.find(p => p.id === item.productId);
               const availableQualities = selProduct?.grades || [];
-              const availableSizes = selProduct?.sizes || [];
+              
+              let availableSizes = [];
+              if (selProduct) {
+                if (item.qualityId) {
+                  // Only show sizes that have a variant with a rate > 0 for the selected quality
+                  availableSizes = selProduct.sizes.filter((s: any) => {
+                    const variant = selProduct.variants.find((v: any) => v.grade_id === item.qualityId && v.size_id === s.id);
+                    return variant && variant.rate && variant.rate.rate > 0;
+                  });
+                } else {
+                  availableSizes = selProduct.sizes;
+                }
+              }
 
               return (
                 <div key={item.id} className="p-4 border border-slate-200 rounded bg-slate-50 relative">
