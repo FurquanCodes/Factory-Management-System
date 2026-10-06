@@ -2,14 +2,34 @@ import { createClient } from '@supabase/supabase-js'
 import Link from 'next/link'
 import Greeting from '@/app/components/Greeting'
 import DeletePaymentButton from '@/app/(app)/payments/DeletePaymentButton'
+import SalesFilter from './SalesFilter'
 
 export const dynamic = 'force-dynamic'
 
-export default async function DashboardPage() {
+export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
+  const resolvedParams = await searchParams;
+  const filter = resolvedParams.filter === '7days' ? '7days' : resolvedParams.filter === '30days' ? '30days' : 'today';
+
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
+
+  const todayStr = new Date().toISOString().split('T')[0];
+  let salesStartDateStr = todayStr;
+  let salesTitle = "Today's Sales";
+  
+  if (filter === '7days') {
+    const d = new Date();
+    d.setDate(d.getDate() - 7);
+    salesStartDateStr = d.toISOString().split('T')[0];
+    salesTitle = "7 Days Sales";
+  } else if (filter === '30days') {
+    const d = new Date();
+    d.setDate(d.getDate() - 30);
+    salesStartDateStr = d.toISOString().split('T')[0];
+    salesTitle = "30 Days Sales";
+  }
 
   // 1. Fetch all stats in parallel
   const [
@@ -19,7 +39,7 @@ export default async function DashboardPage() {
     { data: outstandingData },
     { data: recentInvoices },
     { data: recentPayments },
-    { data: todayInvoices },
+    { data: filteredInvoices },
     { data: topDebtors },
   ] = await Promise.all([
     supabase.from('invoices').select('*', { count: 'exact', head: true }).neq('status', 'cancelled'),
@@ -28,7 +48,7 @@ export default async function DashboardPage() {
     supabase.from('v_party_outstanding').select('due_amount'),
     supabase.from('invoices').select('*, parties(name)').neq('status', 'cancelled').order('created_at', { ascending: false }).limit(5),
     supabase.from('party_payments').select('*, parties(name)').is('deleted_at', null).order('created_at', { ascending: false }).limit(5),
-    supabase.from('invoices').select('total_amount').eq('invoice_date', new Date().toISOString().split('T')[0]).neq('status', 'cancelled'),
+    supabase.from('invoices').select('total_amount').gte('invoice_date', salesStartDateStr).eq('status', 'final'),
     supabase.from('v_party_outstanding').select('party_id, due_amount, ...parties(name)').gt('due_amount', 0).order('due_amount', { ascending: false }).limit(5),
   ])
 
@@ -39,8 +59,8 @@ export default async function DashboardPage() {
     return due > 0 ? sum + due : sum;
   }, 0) || 0;
 
-  const todayTotal = todayInvoices?.reduce((sum, r) => sum + Number(r.total_amount || 0), 0) || 0
-  const todayCount = todayInvoices?.length || 0
+  const filteredTotal = filteredInvoices?.reduce((sum, r) => sum + Number(r.total_amount || 0), 0) || 0;
+  const filteredCount = filteredInvoices?.length || 0;
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
@@ -77,11 +97,11 @@ export default async function DashboardPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                 </svg>
               </div>
-              <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full uppercase tracking-wider">Today</span>
+              <SalesFilter currentFilter={filter} />
             </div>
-            <p className="text-sm font-bold text-slate-500 mb-1">Today&apos;s Sales</p>
-            <p className="text-3xl font-black text-slate-800">Rs {todayTotal.toLocaleString()}</p>
-            <p className="text-sm text-slate-400 mt-1 font-medium">{todayCount} invoice{todayCount !== 1 ? 's' : ''} today</p>
+            <p className="text-sm font-bold text-slate-500 mb-1">{salesTitle}</p>
+            <p className="text-3xl font-black text-slate-800">Rs {filteredTotal.toLocaleString()}</p>
+            <p className="text-sm text-slate-400 mt-1 font-medium">{filteredCount} invoice{filteredCount !== 1 ? 's' : ''} in period</p>
           </div>
 
           {/* Total Outstanding */}
