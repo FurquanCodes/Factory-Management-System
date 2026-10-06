@@ -71,15 +71,27 @@ export default function InvoiceForm({ customers, inventory, nextInvoiceNo }: { c
     const variant = product?.variants.find((v: any) => v.grade_id === item.qualityId && v.size_id === sizeId);
     
     const rateVal = variant?.rate?.rate || 0;
-    const unitVal = variant?.rate?.rate_unit || '';
-    const amt = rateVal * item.qty;
+    let unitVal = variant?.rate?.rate_unit || '';
+    const lowerUnit = unitVal.toLowerCase();
+    
+    if (lowerUnit.includes('dozen')) {
+      unitVal = 'Dozen';
+    } else if (lowerUnit.includes('piece') || lowerUnit.includes('pcs')) {
+      unitVal = 'Piece';
+    } else if (!unitVal) {
+      unitVal = 'Piece';
+    }
+
+    const amt = 0; // Don't calculate amount until unit is selected
 
     updateItem(id, {
       sizeId,
       sizeName: size?.label || '',
       variantId: variant?.id || '',
-      rate: rateVal,
-      unit: unitVal,
+      baseRate: rateVal,
+      baseUnit: unitVal,
+      rate: 0, // Reset rate until unit is selected
+      unit: '', // Reset unit to force selection
       amount: amt
     });
   };
@@ -88,6 +100,27 @@ export default function InvoiceForm({ customers, inventory, nextInvoiceNo }: { c
     const qty = parseInt(qtyStr) || 0;
     const amt = item.rate * qty;
     updateItem(id, { qty, amount: amt });
+  };
+
+  const handleUnitChange = (id: string, item: any, newUnit: string) => {
+    let newRate = item.baseRate || 0;
+    const baseU = item.baseUnit || '';
+    
+    const isBaseDozen = baseU === 'Dozen';
+    const isBasePiece = baseU === 'Piece';
+    const isNewDozen = newUnit === 'Dozen';
+    const isNewPiece = newUnit === 'Piece';
+
+    if (isBaseDozen && isNewPiece) {
+      newRate = Number((item.baseRate / 12).toFixed(2));
+    } else if (isBasePiece && isNewDozen) {
+      newRate = Number((item.baseRate * 12).toFixed(2));
+    } else {
+      newRate = item.baseRate || 0;
+    }
+
+    const amt = newRate * item.qty;
+    updateItem(id, { unit: newUnit, rate: newRate, amount: amt });
   };
 
   const totalAmount = items.reduce((sum, item) => sum + item.amount, 0);
@@ -314,22 +347,42 @@ export default function InvoiceForm({ customers, inventory, nextInvoiceNo }: { c
                       <input 
                         type="number" 
                         min="1" 
-                        className="w-full p-2 border border-slate-300 rounded bg-white font-bold text-lg" 
-                        value={item.qty}
+                        className="w-full p-2 border border-slate-300 rounded bg-white font-bold text-lg focus:border-blue-500 outline-none" 
+                        value={item.qty || ''}
                         onChange={(e) => handleQtyChange(item.id, item, e.target.value)}
+                        onWheel={(e) => (e.target as HTMLElement).blur()}
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-bold text-slate-500 mb-1">Unit</label>
-                      <div className="w-full p-2 border border-slate-200 rounded bg-slate-200 font-bold text-slate-600 capitalize text-lg text-center cursor-not-allowed">
-                        {item.unit || '-'}
-                      </div>
+                      <select 
+                        className="w-full p-2 border border-slate-300 rounded bg-white font-bold text-slate-800 capitalize text-lg"
+                        value={item.unit}
+                        onChange={(e) => handleUnitChange(item.id, item, e.target.value)}
+                      >
+                        <option value="" disabled>Choose Unit</option>
+                        {item.baseUnit && item.baseUnit !== 'Piece' && item.baseUnit !== 'Dozen' && (
+                          <option value={item.baseUnit}>{item.baseUnit}</option>
+                        )}
+                        <option value="Piece">Piece</option>
+                        <option value="Dozen">Dozen</option>
+                      </select>
                     </div>
                     <div>
                       <label className="block text-sm font-bold text-slate-500 mb-1">Rate</label>
-                      <div className="w-full p-2 border border-slate-200 rounded bg-slate-100 font-bold text-slate-600 text-lg text-right">
-                        {item.rate > 0 ? `Rs ${item.rate}` : '-'}
-                      </div>
+                      <input 
+                        type="number" 
+                        min="0"
+                        step="0.01"
+                        className="w-full p-2 border border-slate-300 rounded bg-white font-bold text-slate-800 text-lg text-left focus:border-blue-500 outline-none" 
+                        value={item.rate || ''}
+                        onChange={(e) => {
+                          const newRate = parseFloat(e.target.value) || 0;
+                          const amt = newRate * item.qty;
+                          updateItem(item.id, { rate: newRate, amount: amt, baseRate: newRate, baseUnit: item.unit });
+                        }}
+                        onWheel={(e) => (e.target as HTMLElement).blur()}
+                      />
                     </div>
                     <div className="flex items-center justify-between pb-1">
                       <div className="text-xl font-black text-emerald-600">
@@ -373,8 +426,8 @@ export default function InvoiceForm({ customers, inventory, nextInvoiceNo }: { c
               </div>
             )}
           </div>
-          {paymentStatus === 'paid' && !selectedCustomer && (
-            <p className="mt-3 text-sm text-amber-600 font-bold">* Note: Cash receipts are not tracked in the persistent ledger for walk-in (New) customers.</p>
+          {paymentStatus === 'paid' && customerMode === 'new' && !saveNewCustomer && (
+            <p className="mt-3 text-sm text-amber-600 font-bold">* Note: Please check "Save to Customers List" above if you want to save this customer's record and track their ledger.</p>
           )}
         </div>
         
