@@ -6,6 +6,8 @@ import BackButton from '@/app/components/BackButton'
 import DeleteInvoiceButton from '@/app/(app)/invoices/DeleteInvoiceButton'
 import DeletePaymentButton from '@/app/(app)/payments/DeletePaymentButton'
 import DeleteCustomerButton from '@/app/(app)/customers/DeleteCustomerButton'
+import EditCustomerModal from '@/app/(app)/customers/EditCustomerModal'
+import EditBfModal from '@/app/(app)/customers/EditBfModal'
 import { notFound } from 'next/navigation'
 
 // We force dynamic because this is an individual customer page
@@ -82,11 +84,17 @@ export default async function CustomerLedgerPage({
             <p className="text-lg text-slate-500 font-medium">{customer.city} {customer.phone ? `| ${customer.phone}` : ''}</p>
           </div>
           
-          <div className="flex gap-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <EditCustomerModal customer={customer} />
+            <EditBfModal
+              customerId={customer.id}
+              customerName={customer.name}
+              currentBf={Number(customer.opening_balance || 0)}
+            />
             <DeleteCustomerButton customerId={customer.id} customerName={customer.name} />
             <Link 
               href={`/payments/new?partyId=${customer.id}&amount=${currentDue}`}
-              className="px-6 py-3 bg-emerald-600 text-white font-bold text-lg rounded-lg shadow-sm hover:bg-emerald-700 transition-colors"
+              className="px-6 py-3 bg-emerald-600 text-white font-bold text-base rounded-lg shadow-sm hover:bg-emerald-700 transition-colors"
             >
               + Record Payment
             </Link>
@@ -130,6 +138,9 @@ export default async function CustomerLedgerPage({
                   if (row.dt) {
                     const d = new Date(row.dt);
                     dateStr = d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
+                  } else if (row.ts) {
+                    const d = new Date(row.ts);
+                    dateStr = d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
                   }
                   let timeStr = '';
                   if (row.ts) {
@@ -143,7 +154,17 @@ export default async function CustomerLedgerPage({
                         {timeStr && <span className="block text-xs text-slate-400 mt-0.5">{timeStr}</span>}
                       </td>
                       <td className="p-4 font-bold text-slate-800">
-                        {row.details}
+                        <span className="inline-flex items-center">
+                          {row.details}
+                          {row.kind === 'opening' && (
+                            <EditBfModal
+                              customerId={customer.id}
+                              customerName={customer.name}
+                              currentBf={Number(customer.opening_balance || 0)}
+                              compact
+                            />
+                          )}
+                        </span>
                         {row.kind === 'invoice' && row.ref_id && (
                           <span className="ml-2 text-xs bg-slate-200 text-slate-600 px-2 py-1 rounded">View</span>
                         )}
@@ -154,10 +175,18 @@ export default async function CustomerLedgerPage({
                         )}
                       </td>
                       <td className="p-4 text-right font-medium text-red-500">
-                        {Number(row.bill) > 0 ? Number(row.bill).toLocaleString(undefined, {minimumFractionDigits: 2}) : '-'}
+                        {row.kind === 'opening' && Number(customer.opening_balance || 0) < 0
+                          ? '-'
+                          : Number(row.bill) > 0 
+                            ? Number(row.bill).toLocaleString(undefined, {minimumFractionDigits: 2}) 
+                            : '-'}
                       </td>
                       <td className="p-4 text-right font-medium text-emerald-500">
-                        {Number(row.received) > 0 ? Number(row.received).toLocaleString(undefined, {minimumFractionDigits: 2}) : '-'}
+                        {row.kind === 'opening' && Number(customer.opening_balance || 0) < 0
+                          ? Math.abs(Number(customer.opening_balance)).toLocaleString(undefined, {minimumFractionDigits: 2})
+                          : Number(row.received) > 0 
+                            ? Number(row.received).toLocaleString(undefined, {minimumFractionDigits: 2}) 
+                            : '-'}
                       </td>
                       <td className="p-4 text-right font-black text-slate-800 text-lg">
                         {formatBalance(row.due_amount)}
@@ -234,19 +263,36 @@ export default async function CustomerLedgerPage({
 
       {/* ----------------- EXACT A4 PRINT PAPER ----------------- */}
       <div className="paper mx-auto mt-16" id="paper">
-        <div className="ph" style={{ marginBottom: '20px' }}>
-          <b>A One Sanitory Ware</b>
-          <span>Customer Ledger</span>
+        <div className="ph">
+          <div className="ph-left">
+            <b>A One Sanitory Ware</b>
+            <span>Hafizabad Road, Gujranwala</span>
+          </div>
+          <div className="ph-right" style={{ fontSize: '24px', fontWeight: 600, letterSpacing: '2px' }}>
+            CUSTOMER LEDGER
+          </div>
         </div>
         
-        <div style={{ marginBottom: '20px', borderBottom: '2px solid #000', paddingBottom: '10px', display: 'flex', justifyContent: 'space-between' }}>
-          <div>
-            <div style={{ fontSize: '18px', fontWeight: 'bold' }}>{customer.name}</div>
-            <div>{customer.city} {customer.phone ? `| ${customer.phone}` : ''}</div>
+        <div className="meta" style={{ borderBottom: '2px solid #000' }}>
+          <div className="meta-col">
+            <div className="meta-item">
+              <span>Customer Name</span>
+              <b style={{ fontSize: '18px' }}>{customer.name}</b>
+            </div>
+            <div className="meta-item">
+              <span>City / Phone</span>
+              <b>{customer.city || '-'} {customer.phone ? `| ${customer.phone}` : ''}</b>
+            </div>
           </div>
-          <div style={{ textAlign: 'right' }}>
-            <div>Current Balance:</div>
-            <div style={{ fontSize: '20px', fontWeight: 'bold' }}>Rs {formatBalance(currentDue)}</div>
+          <div className="meta-col" style={{ textAlign: 'right', alignItems: 'flex-end' }}>
+            <div className="meta-item" style={{ alignItems: 'flex-end' }}>
+              <span>Current Balance Due</span>
+              <b style={{ fontSize: '22px', color: '#000', fontWeight: 900 }}>Rs {formatBalance(currentDue)}</b>
+            </div>
+            <div className="meta-item" style={{ alignItems: 'flex-end' }}>
+              <span>Report Generated</span>
+              <b>{new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</b>
+            </div>
           </div>
         </div>
 
@@ -267,6 +313,9 @@ export default async function CustomerLedgerPage({
                 if (row.dt) {
                   const d = new Date(row.dt);
                   dateStr = d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
+                } else if (row.ts) {
+                  const d = new Date(row.ts);
+                  dateStr = d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
                 }
                 let timeStr = '';
                 if (row.ts) {
@@ -280,8 +329,20 @@ export default async function CustomerLedgerPage({
                       {timeStr && <div style={{ fontSize: '0.8em', color: '#666' }}>{timeStr}</div>}
                     </td>
                     <td><b>{row.details}</b></td>
-                    <td className="r">{Number(row.bill) > 0 ? Number(row.bill).toLocaleString(undefined, {minimumFractionDigits: 2}) : '-'}</td>
-                    <td className="r">{Number(row.received) > 0 ? Number(row.received).toLocaleString(undefined, {minimumFractionDigits: 2}) : '-'}</td>
+                    <td className="r">
+                      {row.kind === 'opening' && Number(customer.opening_balance || 0) < 0
+                        ? '-'
+                        : Number(row.bill) > 0 
+                          ? Number(row.bill).toLocaleString(undefined, {minimumFractionDigits: 2}) 
+                          : '-'}
+                    </td>
+                    <td className="r">
+                      {row.kind === 'opening' && Number(customer.opening_balance || 0) < 0
+                        ? Math.abs(Number(customer.opening_balance)).toLocaleString(undefined, {minimumFractionDigits: 2})
+                        : Number(row.received) > 0 
+                          ? Number(row.received).toLocaleString(undefined, {minimumFractionDigits: 2}) 
+                          : '-'}
+                    </td>
                     <td className="r"><b>{formatBalance(row.due_amount)}</b></td>
                   </tr>
                 )

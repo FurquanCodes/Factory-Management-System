@@ -70,3 +70,111 @@ export async function deleteCustomerAction(customerId: string) {
   
   return { success: true };
 }
+
+export async function updateCustomerAction(payload: {
+  id: string;
+  name: string;
+  city?: string | null;
+  phone?: string | null;
+  type?: string | null;
+  address?: string | null;
+  notes?: string | null;
+}) {
+  if (!payload.id) {
+    throw new Error('Customer ID is required');
+  }
+  if (!payload.name || !payload.name.trim()) {
+    throw new Error('Customer name is required');
+  }
+
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  const { data: orgs } = await supabase.from('organizations').select('id').limit(1);
+  if (!orgs || orgs.length === 0) throw new Error('No organization found');
+  const orgId = orgs[0].id;
+
+  const updateData: Record<string, any> = {
+    name: payload.name.trim(),
+    city: payload.city ? payload.city.trim() : null,
+    phone: payload.phone ? payload.phone.trim() : null,
+    type: payload.type || 'customer',
+    updated_at: new Date().toISOString()
+  };
+
+  if (payload.address !== undefined) {
+    updateData.address = payload.address ? payload.address.trim() : null;
+  }
+  if (payload.notes !== undefined) {
+    updateData.notes = payload.notes ? payload.notes.trim() : null;
+  }
+
+  const { error } = await supabase
+    .from('parties')
+    .update(updateData)
+    .eq('id', payload.id)
+    .eq('organization_id', orgId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  revalidatePath('/customers');
+  revalidatePath(`/customers/${payload.id}`);
+  revalidatePath('/outstanding');
+  revalidatePath('/dashboard');
+  revalidatePath('/invoices/new');
+
+  return { success: true };
+}
+
+export async function updateCustomerBfAction(payload: {
+  customerId: string;
+  opening_balance: number;
+  createdAt?: string;
+}) {
+  if (!payload.customerId) {
+    throw new Error('Customer ID is required');
+  }
+  if (typeof payload.opening_balance !== 'number' || isNaN(payload.opening_balance)) {
+    throw new Error('Valid opening balance amount is required');
+  }
+
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  const { data: orgs } = await supabase.from('organizations').select('id').limit(1);
+  if (!orgs || orgs.length === 0) throw new Error('No organization found');
+  const orgId = orgs[0].id;
+
+  const updateData: Record<string, any> = {
+    opening_balance: payload.opening_balance,
+    updated_at: new Date().toISOString()
+  };
+
+  if (payload.createdAt) {
+    updateData.created_at = payload.createdAt;
+  }
+
+  const { error } = await supabase
+    .from('parties')
+    .update(updateData)
+    .eq('id', payload.customerId)
+    .eq('organization_id', orgId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  revalidatePath('/customers');
+  revalidatePath(`/customers/${payload.customerId}`);
+  revalidatePath('/outstanding');
+  revalidatePath('/dashboard');
+
+  return { success: true };
+}
+
